@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'DBFileSynchronizer_Example' do
+  pod 'DBFileSynchronizer', :path => '../'
+
+  target 'DBFileSynchronizer_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
