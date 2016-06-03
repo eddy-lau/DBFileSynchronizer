@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DBFileSynchronizer'
-  s.version          = '0.0.1'
+  s.version          = '0.0.2'
   s.summary          = 'Dropbox file sync utilities'
 
 # This description is used to generate tags and improve search results.
@@ -29,6 +29,7 @@ Objective-C utilities classes for syncing objects or files on Dropbox
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '7.0'
+  s.requires_arc = false
 
   s.source_files = 'DBFileSynchronizer/Classes/**/*'
   
@@ -38,6 +39,5 @@ Objective-C utilities classes for syncing objects or files on Dropbox
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
-  s.frameworks = 'DropboxSDK'
   s.dependency 'Dropbox-iOS-SDK', '~> 1.3'
 end

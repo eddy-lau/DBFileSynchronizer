@@ -10,7 +10,7 @@
 #import "DropboxSDK.h"
 #import "DBAccountInfoCell.h"
 
-#define L(string) [self localizedString:(string)]
+#define L(s) ([self localizedText:(s)])
 
 enum {
     SECTION_DROPBOX_ACCOUNT = 0,
@@ -24,7 +24,7 @@ enum {
     UIAlertViewDelegate
 >
 
-@property (nonatomic,retain) UITableView *tableView;
+@property (nonatomic,assign) UITableView *tableView;
 @property (nonatomic,retain) UIAlertView *confirmDisconnectAlert;
 
 @end
@@ -41,15 +41,14 @@ enum {
 }
 
 - (void) dealloc {
-    self.tableView = nil;
-    self.confirmDisconnectAlert = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super dealloc];
 }
 
 - (void)loadView {
     
     CGRect rect = [UIScreen mainScreen].applicationFrame;
-    self.tableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStyleGrouped];
+    self.tableView = [[[UITableView alloc] initWithFrame:rect style:UITableViewStyleGrouped] autorelease];
     self.tableView.autoresizingMask |= UIViewAutoresizingFlexibleHeight;
     self.tableView.autoresizingMask |= UIViewAutoresizingFlexibleWidth;
     self.tableView.dataSource = self;
@@ -73,17 +72,21 @@ enum {
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark private methods
+#pragma mark localization helpers
 
-- (NSString *) localizedString:(NSString *)string {
+
+
+- (NSString *) localizedText:(NSString *)text {
     
     if ([self.delegate respondsToSelector:@selector(localizedStringForSyncSettingViewController:ofText:)]) {
-        return [self.delegate localizedStringForSyncSettingViewController:self ofText:string];
+        return [self.delegate localizedStringForSyncSettingViewController:self ofText:text];
     } else {
-        return string;
+        return text;
     }
     
 }
+
+#pragma mark private methods
 
 - (UIView *) tableHeaderView {
     
@@ -91,8 +94,8 @@ enum {
     NSString *text = [NSString stringWithFormat:L(@"當你登入了 Dropbox 賬戶後，你的筆記會自動備份到《應用/%@》資料夾。"), appName];
     
     
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 130)];
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, view.bounds.size.width-40, view.bounds.size.height - 40)];
+    UIView *view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 130)] autorelease];
+    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(20, 20, view.bounds.size.width-40, view.bounds.size.height - 40)] autorelease];
     label.numberOfLines = 1000;
     label.backgroundColor = [UIColor clearColor];
     label.autoresizingMask |= UIViewAutoresizingFlexibleHeight;
@@ -109,7 +112,7 @@ enum {
     NSDate *date = [self.delegate lastSynchronizedTimeForSyncSettingViewController:self];
     
     if (date != nil) {
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
         [dateFormatter setDateStyle:NSDateFormatterShortStyle];
         [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
         [dateFormatter setDoesRelativeDateFormatting:YES];
@@ -121,8 +124,8 @@ enum {
                                                             timeStyle: NSDateFormatterShortStyle];
         
         
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 120)];
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, view.bounds.size.width-40, view.bounds.size.height - 40)];
+        UIView *view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 120)] autorelease];
+        UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(20, 20, view.bounds.size.width-40, view.bounds.size.height - 40)] autorelease];
         label.font = [UIFont systemFontOfSize:14];
         label.textAlignment = NSTextAlignmentCenter;
         label.textColor = [UIColor grayColor];
@@ -164,7 +167,7 @@ enum {
             NSString *cellId = @"dbAccountInfoCell";
             DBAccountInfoCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
             if (cell == nil) {
-                cell = [[DBAccountInfoCell alloc] initWithReuseIdentifier:cellId];
+                cell = [[[DBAccountInfoCell alloc] initWithReuseIdentifier:cellId] autorelease];
             }
             
             [cell reload];
@@ -176,7 +179,7 @@ enum {
             NSString *cellId = @"dbConnectButtonCell";
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
             if (cell == nil) {
-                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
+                cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId] autorelease];
                 cell.textLabel.textAlignment = NSTextAlignmentLeft;
                 cell.textLabel.textColor = [UIColor colorWithRed:0.0 green:122.0/255.0 blue:255.0/255.0 alpha:1.0];
             }
@@ -217,7 +220,7 @@ enum {
     
     if (section == SECTION_DROPBOX_ACCOUNT) {
         
-        UILabel *footerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 30)];
+        UILabel *footerLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 30)] autorelease];
         footerLabel.backgroundColor = [UIColor clearColor];
         footerLabel.textColor = [UIColor grayColor];
         footerLabel.font = [UIFont systemFontOfSize:14.0];
@@ -269,10 +272,10 @@ enum {
                 
                 NSString *title = L(@"Disconnect");
                 NSString *message = L(@"Are you sure you want to disconnect Dropbox?");
-                self.confirmDisconnectAlert = [[UIAlertView alloc] initWithTitle:title
+                self.confirmDisconnectAlert = [[[UIAlertView alloc] initWithTitle:title
                                                                          message:message delegate:self
                                                                cancelButtonTitle:L(@"Cancel")
-                                                                otherButtonTitles:L(@"Disconnect"), nil];
+                                                                otherButtonTitles:L(@"Disconnect"), nil] autorelease];
                 
                 [self.confirmDisconnectAlert show];
                 

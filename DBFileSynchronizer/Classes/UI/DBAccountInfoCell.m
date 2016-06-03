@@ -50,11 +50,11 @@
 
         if (self.accountInfo == nil) {
             self.detailTextLabel.text = nil;
-            self.restClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
+            self.restClient = [[[DBRestClient alloc] initWithSession:[DBSession sharedSession]] autorelease];
             self.restClient.delegate = self;
             [self.restClient loadAccountInfo];
             
-            UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+            UIActivityIndicatorView *activityIndicator = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
             [activityIndicator startAnimating];
             activityIndicator.hidden = NO;
             
@@ -77,7 +77,7 @@
     
     if (client == self.restClient) {
         
-        //[[client retain] autorelease];
+        [[client retain] autorelease];
         
         self.accountInfo = info;
         self.accessoryView = nil;

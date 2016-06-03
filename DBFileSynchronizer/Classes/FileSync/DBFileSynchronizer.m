@@ -32,6 +32,7 @@ typedef enum {
 
 - (void) dealloc {
     self.restClient = nil;
+    [super dealloc];
 }
 
 - (NSString *) userId {
@@ -327,7 +328,7 @@ typedef enum {
     }
     
     if (self.restClient == nil) {
-        self.restClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
+        self.restClient = [[[DBRestClient alloc] initWithSession:[DBSession sharedSession]] autorelease];
         self.restClient.delegate = self;
     }
 
