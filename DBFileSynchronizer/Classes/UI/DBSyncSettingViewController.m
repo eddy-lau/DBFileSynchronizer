@@ -91,7 +91,7 @@ enum {
 - (UIView *) tableHeaderView {
     
     NSString *appName = [self.delegate appNameForSyncSettingViewController:self];
-    NSString *text = [NSString stringWithFormat:L(@"當你登入了 Dropbox 賬戶後，你的筆記會自動備份到《應用/%@》資料夾。"), appName];
+    NSString *text = [NSString stringWithFormat:L(@"當你登入了 Dropbox 賬戶後，你的資料會自動備份到《應用/%@》資料夾。"), appName];
     
     
     UIView *view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 130)] autorelease];
