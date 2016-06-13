@@ -310,19 +310,4 @@ enum {
     [self.tableView reloadData];
 }
 
-- (void) notesSynchronizerDidDownloadNotesNotification:(NSNotification *)notification {
-    [self.tableView reloadData];
-}
-
-- (void) notesSynchronizerDidUploadNotesNotification:(NSNotification *)notification {
-    [self.tableView reloadData];
-}
-
-- (void) notesSynchronizerDidFailNotification:(NSNotification *)notification {
-    NSError *error = notification.userInfo[@"error"];
-    if ([error.domain isEqualToString:@"dropbox.com"] && error.code == 401) {
-        [[DBSession sharedSession] unlinkAll];
-    }
-}
-
 @end
