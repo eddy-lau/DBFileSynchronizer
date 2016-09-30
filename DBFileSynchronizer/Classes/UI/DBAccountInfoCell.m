@@ -7,15 +7,13 @@
 //
 
 #import "DBAccountInfoCell.h"
-#import "DropboxSDK.h"
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 
 @interface DBAccountInfoCell ()
-<
-    DBRestClientDelegate
->
 
-@property (nonatomic,retain) DBRestClient *restClient;
-@property (nonatomic,retain) DBAccountInfo *accountInfo;
+@property (nonatomic,retain) DropboxClient *restClient;
+@property (nonatomic,retain) DBUSERSAccount *accountInfo;
+@property (nonatomic,readonly) BOOL isLinked;
 
 @end
 
@@ -44,15 +42,27 @@
     // Configure the view for the selected state
 }
 
+- (BOOL) isLinked {
+    return [DropboxClientsManager authorizedClient] != nil;
+}
+
 - (void) reload {
     
-    if ([DBSession sharedSession].isLinked) {
+    if (self.isLinked) {
 
         if (self.accountInfo == nil) {
             self.detailTextLabel.text = nil;
-            self.restClient = [[[DBRestClient alloc] initWithSession:[DBSession sharedSession]] autorelease];
-            self.restClient.delegate = self;
-            [self.restClient loadAccountInfo];
+            self.restClient = [DropboxClientsManager authorizedClient];
+            [[self.restClient.usersRoutes getCurrentAccount]
+                response:^(DBUSERSFullAccount *account, DBNilObject * nilObject, DBError * error) {
+                    
+                    if (account) {
+                        [self restClient:self.restClient loadedAccountInfo:account];
+                    } else {
+                        
+                    }
+                    
+                }];
             
             UIActivityIndicatorView *activityIndicator = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
             [activityIndicator startAnimating];
@@ -62,7 +72,7 @@
             
             
         } else {
-            self.detailTextLabel.text = self.accountInfo.displayName;
+            self.detailTextLabel.text = self.accountInfo.name.displayName;
         }
         
     } else {
@@ -73,7 +83,7 @@
     
 }
 
-- (void)restClient:(DBRestClient *)client loadedAccountInfo:(DBAccountInfo *)info {
+- (void)restClient:(DropboxClient *)client loadedAccountInfo:(DBUSERSAccount *)info {
     
     if (client == self.restClient) {
         
@@ -81,7 +91,7 @@
         
         self.accountInfo = info;
         self.accessoryView = nil;
-        self.detailTextLabel.text = info.displayName;
+        self.detailTextLabel.text = info.name.displayName;
         
         self.restClient = nil;
         [self setNeedsLayout];

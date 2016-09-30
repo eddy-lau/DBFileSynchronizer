@@ -7,7 +7,7 @@
 //
 
 #import "DBSyncSettingViewController.h"
-#import "DropboxSDK.h"
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 #import "DBAccountInfoCell.h"
 
 #define L(s) ([self localizedText:(s)])
@@ -26,6 +26,7 @@ enum {
 
 @property (nonatomic,assign) UITableView *tableView;
 @property (nonatomic,retain) UIAlertView *confirmDisconnectAlert;
+@property (nonatomic,readonly) BOOL isLinked;
 
 @end
 
@@ -87,6 +88,10 @@ enum {
 }
 
 #pragma mark private methods
+
+- (BOOL) isLinked {
+    return [DropboxClientsManager authorizedClient] != nil;
+}
 
 - (UIView *) tableHeaderView {
     
@@ -184,7 +189,7 @@ enum {
                 cell.textLabel.textColor = [UIColor colorWithRed:0.0 green:122.0/255.0 blue:255.0/255.0 alpha:1.0];
             }
             
-            if ([DBSession sharedSession].isLinked) {
+            if (self.isLinked) {
                 
                 cell.textLabel.text = L(@"登出");
                 
@@ -226,7 +231,7 @@ enum {
         footerLabel.font = [UIFont systemFontOfSize:14.0];
         footerLabel.textAlignment = NSTextAlignmentCenter;
         
-        if ([DBSession sharedSession].isLinked) {
+        if (self.isLinked) {
             footerLabel.text = L(@"按下登出 Dropbox 賬戶"); //ZHLocalizedString(@"Tap to disconnect this Dropbox account", @"");
         } else {
             footerLabel.text = L(@"按下登入 Dropbox 賬戶"); //ZHLocalizedString(@"Tap to connect a Dropbox account", @"");
@@ -264,9 +269,16 @@ enum {
     if (indexPath.section == SECTION_DROPBOX_ACCOUNT) {
     
         if (indexPath.row == 1) {
-            if (![[DBSession sharedSession] isLinked]) {
+            if (!self.isLinked) {
                 
-                [[DBSession sharedSession] linkFromController:self];
+                // v1
+                //[[DBSession sharedSession] linkFromController:self];
+                
+                // v2
+                [DropboxClientsManager authorizeFromController:[UIApplication sharedApplication]
+                                                    controller:self
+                                                       openURL:^(NSURL *url){ [[UIApplication sharedApplication] openURL:url]; }
+                                                   browserAuth:YES];
                 
             } else {
                 
@@ -295,7 +307,7 @@ enum {
 - (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     
     if (buttonIndex == 1) {
-        [[DBSession sharedSession] unlinkAll];
+        [DropboxClientsManager unlinkClients];
         [self.tableView reloadData];
         
         if ([self.delegate respondsToSelector:@selector(syncSettingViewControllerDidLogout:)]) {

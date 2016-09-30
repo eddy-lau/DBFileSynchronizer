@@ -29,6 +29,7 @@
         rev = [metadata.rev copy];
         revision = metadata.revision;
         isDeleted = metadata.isDeleted;
+        videoDuration = metadata.videoDuration;
         
         filename = [metadata.filename copy];
         

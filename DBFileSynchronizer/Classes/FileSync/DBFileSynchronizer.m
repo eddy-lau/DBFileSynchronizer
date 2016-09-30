@@ -7,7 +7,7 @@
 //
 
 #import "DBFileSynchronizer.h"
-#import "DropboxSDK.h"
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 #import "DBLocalMetadata.h"
 
 typedef enum {
@@ -18,11 +18,9 @@ typedef enum {
 } SyncMode;
 
 @interface DBFileSynchronizer ()
-<
-    DBRestClientDelegate
->
 
-@property (nonatomic,retain) DBRestClient *restClient;
+@property (nonatomic,retain) DropboxClient *restClient;
+@property (nonatomic,copy)   NSString *accountId;
 @property (nonatomic)        BOOL downloadForMerge;
 
 
@@ -36,15 +34,7 @@ typedef enum {
 }
 
 - (NSString *) userId {
-    
-    NSString *userId = nil;
-    NSArray *userIds = [[DBSession sharedSession] userIds];
-    
-    if (userIds.count > 0) {
-        userId = [userIds firstObject];
-    }
-    
-    return userId;
+    return self.accountId;
 }
 
 - (NSURL *) URLForMetadataFile {
@@ -115,7 +105,36 @@ typedef enum {
     NSString *destFoldername = [self.dataSource destinationFolderInController:self];
     
     if (url && destFoldername && destFileName) {
-        [self.restClient uploadFile:destFileName toPath:destFoldername withParentRev:rev fromPath:url.path];
+        
+        // v1
+        // [self.restClient uploadFile:destFileName toPath:destFoldername withParentRev:rev fromPath:url.path];
+        
+        // v2
+        DBFILESWriteMode *writeMode = nil;
+        
+        if (rev) {
+            writeMode = [[[DBFILESWriteMode alloc] initWithUpdate:rev] autorelease];
+        } else {
+            writeMode = [[[DBFILESWriteMode alloc] initWithAdd] autorelease];
+        }
+        
+        [[self.restClient.filesRoutes uploadUrl:destFileName mode:writeMode autorename:@NO clientModified:nil mute:@NO inputUrl:url]
+            response:^(DBFILESFileMetadata *fileMetadata, DBFILESUploadError *routeError, DBError *error) {
+                
+                if (fileMetadata) {
+                    
+                    DBMetadata *metadata = [[[DBMetadata alloc] initWithFilesMetadata:fileMetadata] autorelease];
+                    [self restClient:self.restClient uploadedFile:destFileName from:url.path metadata:metadata];
+                    
+                } else {
+                    
+                    [self restClient:self.restClient uploadFileFailedWithError:routeError];
+                    
+                }
+                
+            }
+         ];
+        
     } else {
         NSLog(@"Null URL or destFileName or destFolderName");
     }
@@ -124,14 +143,38 @@ typedef enum {
 - (void) downloadFileAtRev:(NSString *)rev {
     
     self.downloadForMerge = NO;
-    
     NSURL *url = [self.dataSource URLForFileToSyncInController:self withUserId:[self userId]];
+    
     NSString *destFileName = [self.dataSource destinationFileNameInController:self];
     NSString *destFoldername = [self.dataSource destinationFolderInController:self];
     NSString *destPath = [destFoldername stringByAppendingPathComponent:destFileName];
+    NSString *destPathOrRev = nil;
+    if (rev != nil) {
+        destPathOrRev = [NSString stringWithFormat:@"rev:%@", rev];
+    } else {
+        destPathOrRev = destPath;
+    }
     
-    [self.restClient loadFile:destPath atRev:rev intoPath:url.path];
+    // v1
+    //[self.restClient loadFile:destPath atRev:rev intoPath:url.path];
     
+    // v2
+    [[[self.restClient filesRoutes] downloadUrl:destPathOrRev rev:nil overwrite:YES destination:url]
+        response:^(DBFILESFileMetadata *fileMetadata, DBFILESDownloadError *routeError, DBError *error, NSURL *url) {
+            
+            if (fileMetadata) {
+                
+                DBMetadata *metadata = [[[DBMetadata alloc] initWithFilesMetadata:fileMetadata] autorelease];
+                [self restClient:self.restClient loadedFile:destPath contentType:@"" metadata:metadata];
+                
+            } else {
+                
+                [self restClient:self.restClient loadFileFailedWithError:routeError];
+                
+            }
+            
+        }
+     ];
 }
 
 - (void) mergeFileAtRev:(NSString *)rev {
@@ -146,13 +189,38 @@ typedef enum {
     NSString *ext = url.path.pathExtension;
     NSString *localFile = [[[url.path stringByDeletingPathExtension] stringByAppendingFormat:@".%@", rev] stringByAppendingPathExtension:ext];
     
-    [self.restClient loadFile:destPath atRev:rev intoPath:localFile];
+    NSString *destPathOrRev = nil;
+    if (rev != nil) {
+        destPathOrRev = [NSString stringWithFormat:@"rev:%@", rev];
+    } else {
+        destPathOrRev = destPath;
+    }
     
+    // v1
+    //[self.restClient loadFile:destPath atRev:rev intoPath:localFile];
+    
+    // v2
+    [[[self.restClient filesRoutes] downloadUrl:destPathOrRev rev:nil overwrite:YES destination:url]
+     response:^(DBFILESFileMetadata *fileMetadata, DBFILESDownloadError *routeError, DBError *error, NSURL *url) {
+         
+         if (fileMetadata) {
+             
+             DBMetadata *metadata = [[[DBMetadata alloc] initWithFilesMetadata:fileMetadata] autorelease];
+             [self restClient:self.restClient loadedFile:destPath contentType:@"" metadata:metadata];
+             
+         } else {
+             
+             [self restClient:self.restClient loadFileFailedWithError:routeError];
+             
+         }
+         
+     }
+     ];
 }
 
 #pragma mark DBRestClientDelegate
 
-- (void) restClient:(DBRestClient *)client loadedMetadata:(DBMetadata *)metadata {
+- (void) restClient:(DropboxClient *)client loadedMetadata:(DBMetadata *)metadata {
     
     DBLocalMetadata *localMetadata = [self localMetadata];
     
@@ -232,7 +300,7 @@ typedef enum {
     
 }
 
-- (void) restClient:(DBRestClient *)client loadMetadataFailedWithError:(NSError *)error {
+- (void) restClient:(DropboxClient *)client loadMetadataFailedWithError:(NSError *)error {
     
     BOOL fileNotFound = error.code == 404 && [error.domain isEqualToString:@"dropbox.com"];
     
@@ -254,7 +322,7 @@ typedef enum {
     
 }
 
-- (void) restClient:(DBRestClient *)client loadedFile:(NSString *)destPath contentType:(NSString *)contentType metadata:(DBMetadata *)metadata {
+- (void) restClient:(DropboxClient *)client loadedFile:(NSString *)destPath contentType:(NSString *)contentType metadata:(DBMetadata *)metadata {
 
     if (self.downloadForMerge) {
         
@@ -288,7 +356,7 @@ typedef enum {
     
 }
 
-- (void) restClient:(DBRestClient *)client loadFileFailedWithError:(NSError *)error {
+- (void) restClient:(DropboxClient *)client loadFileFailedWithError:(NSError *)error {
     
     NSLog (@"Error: %@", error);
     if ([self.delegate respondsToSelector:@selector(fileSynchronizer:didFailWithError:)]) {
@@ -297,7 +365,7 @@ typedef enum {
     
 }
 
-- (void) restClient:(DBRestClient *)client uploadedFile:(NSString *)destPath from:(NSString *)srcPath metadata:(DBMetadata *)metadata {
+- (void) restClient:(DropboxClient *)client uploadedFile:(NSString *)destPath from:(NSString *)srcPath metadata:(DBMetadata *)metadata {
     
     NSLog (@"Uploaded: %@", destPath);
     [self saveLocalMetadata:metadata];
@@ -307,7 +375,7 @@ typedef enum {
     }
 }
 
-- (void) restClient:(DBRestClient *)client uploadFileFailedWithError:(NSError *)error {
+- (void) restClient:(DropboxClient *)client uploadFileFailedWithError:(NSError *)error {
     
     NSLog (@"Sync upload failed: %@", error);
     if ([self.delegate respondsToSelector:@selector(fileSynchronizer:didFailWithError:)]) {
@@ -323,23 +391,58 @@ typedef enum {
 
 - (void) sync {
     
-    if (![DBSession sharedSession].isLinked) {
+    DropboxClient *authorizedClient = [DropboxClientsManager authorizedClient];
+    if (authorizedClient == nil) {
         return;
     }
     
     if (self.restClient == nil) {
-        self.restClient = [[[DBRestClient alloc] initWithSession:[DBSession sharedSession]] autorelease];
-        self.restClient.delegate = self;
+        self.restClient = authorizedClient;
     }
+    
+    // v2
+    // Step 0
+    [[[self.restClient usersRoutes] getCurrentAccount]
+        response:^(DBUSERSFullAccount *account, DBNilObject *nilObj, DBError *error) {
+            
+            if (account) {
+                
+                self.accountId = account.accountId;
+                
+                /*
+                 * Step 1
+                 * Download metadata for the file
+                 */
+                NSString *destFileName = [self.dataSource destinationFileNameInController:self];
+                NSString *destFoldername = [self.dataSource destinationFolderInController:self];
+                NSString *path = [destFoldername stringByAppendingPathComponent:destFileName];
+                
+                // v1
+                // [self.restClient loadMetadata:path];
+                
+                // v2
+                [[[self.restClient filesRoutes] getMetadata:path]
+                    response:^(DBFILESMetadata *filesMetadata, DBFILESGetMetadataError *routeError, DBError *error) {
 
-    /*
-     * Step 1
-     * Download metadata for the file
-     */
-    NSString *destFileName = [self.dataSource destinationFileNameInController:self];
-    NSString *destFoldername = [self.dataSource destinationFolderInController:self];
-    NSString *path = [destFoldername stringByAppendingPathComponent:destFileName];
-    [self.restClient loadMetadata:path];
+                        if (filesMetadata) {
+                            DBMetadata *metadata = [[[DBMetadata alloc] initWithFilesMetadata:filesMetadata] autorelease];
+                            [self restClient:self.restClient loadedMetadata:metadata];
+                        } else {
+                            [self restClient:self.restClient loadMetadataFailedWithError:routeError];
+                        }
+                        
+                    }
+                 ];
+                
+                
+            } else {
+                
+                [self restClient:self.restClient loadMetadataFailedWithError:error];
+            }
+            
+        }
+     ];
+
     
 }
 

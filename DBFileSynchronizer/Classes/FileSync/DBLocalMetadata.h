@@ -6,7 +6,7 @@
 //
 //
 
-#import "DropboxSDK.h"
+#import "DBMetadata.h"
 
 @interface DBLocalMetadata : DBMetadata
 
