@@ -34,7 +34,13 @@ typedef enum {
 }
 
 - (NSString *) userId {
-    return self.accountId;
+    
+    NSRange colonRange = [self.accountId rangeOfString:@":"];
+    if (colonRange.location != NSNotFound) {
+        return [self.accountId substringFromIndex:colonRange.location + 1];
+    } else {
+        return self.accountId;
+    }
 }
 
 - (NSURL *) URLForMetadataFile {
@@ -118,7 +124,8 @@ typedef enum {
             writeMode = [[[DBFILESWriteMode alloc] initWithAdd] autorelease];
         }
         
-        [[self.restClient.filesRoutes uploadUrl:destFileName mode:writeMode autorename:@NO clientModified:nil mute:@NO inputUrl:url]
+        NSString *destPath = [destFoldername stringByAppendingPathComponent:destFileName];
+        [[self.restClient.filesRoutes uploadUrl:destPath mode:writeMode autorename:@NO clientModified:nil mute:@NO inputUrl:url]
             response:^(DBFILESFileMetadata *fileMetadata, DBFILESUploadError *routeError, DBError *error) {
                 
                 if (fileMetadata) {
@@ -165,7 +172,7 @@ typedef enum {
             if (fileMetadata) {
                 
                 DBMetadata *metadata = [[[DBMetadata alloc] initWithFilesMetadata:fileMetadata] autorelease];
-                [self restClient:self.restClient loadedFile:destPath contentType:@"" metadata:metadata];
+                [self restClient:self.restClient loadedFile:url.path contentType:@"" metadata:metadata];
                 
             } else {
                 

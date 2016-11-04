@@ -80,26 +80,6 @@
 
 - (id)initWithFilesMetadata:(DBFILESFileMetadata *)filesMetadata {
     
-/*
- thumbnailExists = [coder decodeBoolForKey:@"thumbnailExists"];
- totalBytes = [coder decodeInt64ForKey:@"totalBytes"];
- lastModifiedDate = [[coder decodeObjectForKey:@"lastModifiedDate"] retain];
- clientMtime = [[coder decodeObjectForKey:@"clientMtime"] retain];
- path = [[coder decodeObjectForKey:@"path"] retain];
- isDirectory = [coder decodeBoolForKey:@"isDirectory"];
- contents = [[coder decodeObjectForKey:@"contents"] retain];
- hash = [[coder decodeObjectForKey:@"hash"] retain];
- humanReadableSize = [[coder decodeObjectForKey:@"humanReadableSize"] retain];
- root = [[coder decodeObjectForKey:@"root"] retain];
- icon = [[coder decodeObjectForKey:@"icon"] retain];
- rev = [[coder decodeObjectForKey:@"rev"] retain];
- revision = [coder decodeInt64ForKey:@"revision"];
- isDeleted = [coder decodeBoolForKey:@"isDeleted"];
- if( [coder containsValueForKey:@"videoDuration"] )
- {
- videoDuration = [coder decodeIntegerForKey:@"videoDuration"];
- }
- */
     self = [super init];
     if (self) {
         
@@ -109,8 +89,8 @@
         clientMtime = [filesMetadata.clientModified retain];
         path = [filesMetadata.pathDisplay retain];;
         isDirectory = NO; // See below
-        contents = [NSMutableArray init];
-        hash = ["" retain];
+        contents = [[NSMutableArray alloc] init];
+        hash = [@"" retain];
         humanReadableSize = [[NSString stringWithFormat:@"%@", filesMetadata.size] retain];
         root = nil;
         icon = nil;
