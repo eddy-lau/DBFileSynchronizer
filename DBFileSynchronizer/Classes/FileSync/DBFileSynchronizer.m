@@ -135,7 +135,13 @@ typedef enum {
                     
                 } else {
                     
-                    [self restClient:self.restClient uploadFileFailedWithError:routeError];
+                    NSString *message =
+                        [NSString stringWithFormat:@"Couldn't upload file: %@", destPath];
+                    NSError *error =
+                        [NSError errorWithDomain:@"DBFileSynchronizer"
+                                            code:-1
+                                        userInfo:@{NSLocalizedDescriptionKey:message}];
+                    [self restClient:self.restClient uploadFileFailedWithError:error];
                     
                 }
                 
@@ -176,7 +182,15 @@ typedef enum {
                 
             } else {
                 
-                [self restClient:self.restClient loadFileFailedWithError:routeError];
+                NSString *message =
+                    [NSString stringWithFormat:@"Couldn't load file: %@", destPathOrRev];
+                
+                NSError *error =
+                    [NSError errorWithDomain:@"DBFileSynchronizer"
+                                        code:-1
+                                    userInfo:@{NSLocalizedDescriptionKey:message}];
+                
+                [self restClient:self.restClient loadFileFailedWithError:error];
                 
             }
             
@@ -193,8 +207,6 @@ typedef enum {
     NSURL *url = [self.dataSource URLForFileToSyncInController:self withUserId:[self userId]];
     
     NSString *destPath = [destFoldername stringByAppendingPathComponent:destFileName];
-    NSString *ext = url.path.pathExtension;
-    NSString *localFile = [[[url.path stringByDeletingPathExtension] stringByAppendingFormat:@".%@", rev] stringByAppendingPathExtension:ext];
     
     NSString *destPathOrRev = nil;
     if (rev != nil) {
@@ -217,7 +229,15 @@ typedef enum {
              
          } else {
              
-             [self restClient:self.restClient loadFileFailedWithError:routeError];
+             NSString *message =
+                [NSString stringWithFormat:@"Couldn't load file: %@", destPathOrRev];
+             
+             NSError *error =
+                [NSError errorWithDomain:@"DBFileSynchronizer"
+                                    code:-1
+                                userInfo:@{NSLocalizedDescriptionKey:message}];
+             
+             [self restClient:self.restClient loadFileFailedWithError:error];
              
          }
          
@@ -431,11 +451,20 @@ typedef enum {
                 [[[self.restClient filesRoutes] getMetadata:path]
                     response:^(DBFILESMetadata *filesMetadata, DBFILESGetMetadataError *routeError, DBError *error) {
 
-                        if (filesMetadata) {
-                            DBMetadata *metadata = [[[DBMetadata alloc] initWithFilesMetadata:filesMetadata] autorelease];
+                        if (filesMetadata && [filesMetadata isKindOfClass:[DBFILESFileMetadata class]]) {
+                            DBMetadata *metadata = [[[DBMetadata alloc] initWithFilesMetadata:(DBFILESFileMetadata *)filesMetadata] autorelease];
                             [self restClient:self.restClient loadedMetadata:metadata];
                         } else {
-                            [self restClient:self.restClient loadMetadataFailedWithError:routeError];
+                           
+                            NSString *message =
+                                [NSString stringWithFormat:@"Couldn't get metadata: %@ - %@", path, error.description];
+                            
+                            NSError *error =
+                                [NSError errorWithDomain:@"DBFileSynchronizer"
+                                                    code:-1
+                                                userInfo:@{NSLocalizedDescriptionKey:message}];
+                            
+                            [self restClient:self.restClient loadMetadataFailedWithError:error];
                         }
                         
                     }
@@ -443,6 +472,14 @@ typedef enum {
                 
                 
             } else {
+                
+                NSString *message =
+                    [NSString stringWithFormat:@"Couldn't get current account: %@", error.description];
+                NSError *error =
+                    [NSError errorWithDomain:@"DBFileSynchronizer"
+                                        code:-1
+                                    userInfo:@{NSLocalizedDescriptionKey:message}];
+                
                 
                 [self restClient:self.restClient loadMetadataFailedWithError:error];
             }

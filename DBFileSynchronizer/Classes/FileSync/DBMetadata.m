@@ -95,7 +95,7 @@
         root = nil;
         icon = nil;
         rev = [filesMetadata.rev retain];
-        revision = [filesMetadata.rev retain];
+        revision = [[filesMetadata.rev retain] longLongValue];
         isDeleted = NO; // See below
         videoDuration = 0;
         
