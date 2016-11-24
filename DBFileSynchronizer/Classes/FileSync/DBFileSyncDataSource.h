@@ -11,12 +11,11 @@
 @class DBFileSynchronizer;
 @protocol DBFileSyncDataSource <NSObject>
 
-- (NSURL *) URLForFileToSyncInController:(DBFileSynchronizer *)synchronizer withUserId:(NSString *)userId;
-- (NSString *) destinationFileNameInController:(DBFileSynchronizer *)synchronizer;
-- (NSString *) destinationFolderInController:(DBFileSynchronizer *)synchronizer;
+- (NSURL *) localURLForFileSynchronizer:(DBFileSynchronizer *)synchronizer withUserId:(NSString *)userId;
+- (NSString *) destinationPathForFileSynchronizer:(DBFileSynchronizer *)synchronizer;
 
 @optional
-- (NSURL *) URLForMetadataFileInController:(DBFileSynchronizer *)synchronizer withUserId:(NSString *)userId;
+- (NSURL *) localMetadataURLForFileSynchronizer:(DBFileSynchronizer *)synchronizer withUserId:(NSString *)userId;
 
 
 @end

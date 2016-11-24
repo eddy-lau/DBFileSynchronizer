@@ -50,7 +50,7 @@ NSString *DBSynchronizerDidFailNotification = @"DBSynchronizerDidFailNotificatio
 
 #pragma mark DBFileSyncDataSource
 
-- (NSURL *) URLForFileToSyncInController:(DBFileSynchronizer *)controller withUserId:(NSString *)userId {
+- (NSURL *) localURLForFileSynchronizer:(DBFileSynchronizer *)synchronizer withUserId:(NSString *)userId {
     
     NSFileManager *fm = [NSFileManager defaultManager];
     NSError *error = nil;
@@ -92,7 +92,7 @@ NSString *DBSynchronizerDidFailNotification = @"DBSynchronizerDidFailNotificatio
     
 }
 
-- (NSURL *) URLForMetadataFileInController:(DBFileSynchronizer *)controller withUserId:(NSString *)userId {
+- (NSURL *) localMetadataURLForFileSynchronizer:(DBFileSynchronizer *)synchronizer withUserId:(NSString *)userId {
     
     NSFileManager *fm = [NSFileManager defaultManager];
     NSError *error = nil;
@@ -111,12 +111,8 @@ NSString *DBSynchronizerDidFailNotification = @"DBSynchronizerDidFailNotificatio
     
 }
 
-- (NSString *) destinationFileNameInController:(DBFileSynchronizer *)controller {
-    return [self.syncable fileName];
-}
-
-- (NSString *) destinationFolderInController:(DBFileSynchronizer *)controller {
-    return @"/";
+- (NSString *) destinationPathForFileSynchronizer:(DBFileSynchronizer *)synchronizer {
+    return [@"/" stringByAppendingPathComponent:[self.syncable fileName]];
 }
 
 #pragma mark DBFileDelegate

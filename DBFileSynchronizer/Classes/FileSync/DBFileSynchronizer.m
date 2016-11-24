@@ -42,20 +42,39 @@ typedef enum {
     }
 }
 
+- (NSURL *) localURLFromDataSource {
+    
+    NSString *userId = [self userId];
+    return [self.dataSource localURLForFileSynchronizer:self withUserId:userId];
+    
+}
+
+- (NSString *) destFileNameFromDataSource {
+    
+    NSString *destPath = [self.dataSource destinationPathForFileSynchronizer:self];
+    return [destPath lastPathComponent];
+    
+}
+
+- (NSString *) destFolderFromDataSource {
+    
+    NSString *destPath = [self.dataSource destinationPathForFileSynchronizer:self];
+    return [destPath stringByDeletingLastPathComponent];
+    
+}
+
 - (NSURL *) URLForMetadataFile {
     
     NSURL *url = nil;
     NSString *userId = [self userId];
     
-    if ([self.dataSource respondsToSelector:@selector(URLForMetadataFileInController:withUserId:)]) {
-        
-        url = [self.dataSource URLForMetadataFileInController:self withUserId:userId];
-        
+    if ([self.dataSource respondsToSelector:@selector(localMetadataURLForFileSynchronizer:withUserId:)]) {
+        url = [self.dataSource localMetadataURLForFileSynchronizer:self withUserId:userId];
     }
     
     if (url == nil) {
-        
-        url = [[self.dataSource URLForFileToSyncInController:self withUserId:userId] URLByAppendingPathExtension:@"metadata"];
+
+        url = [[self localURLFromDataSource] URLByAppendingPathExtension:@"metadata"];
         
     }
     
@@ -105,9 +124,9 @@ typedef enum {
 
 - (void) uploadFileWithParentRev:(NSString *)rev {
     
-    NSURL *url = [self.dataSource URLForFileToSyncInController:self withUserId:[self userId]];
-    NSString *destFileName = [self.dataSource destinationFileNameInController:self];
-    NSString *destFoldername = [self.dataSource destinationFolderInController:self];
+    NSURL *url = [self localURLFromDataSource];
+    NSString *destFileName = [self destFileNameFromDataSource];
+    NSString *destFoldername = [self destFolderFromDataSource];
     
     if (url && destFoldername && destFileName) {
         
@@ -155,10 +174,10 @@ typedef enum {
 - (void) downloadFileAtRev:(NSString *)rev {
     
     self.downloadForMerge = NO;
-    NSURL *url = [self.dataSource URLForFileToSyncInController:self withUserId:[self userId]];
+    NSURL *url = [self localURLFromDataSource];
     
-    NSString *destFileName = [self.dataSource destinationFileNameInController:self];
-    NSString *destFoldername = [self.dataSource destinationFolderInController:self];
+    NSString *destFileName = [self destFileNameFromDataSource];
+    NSString *destFoldername = [self destFolderFromDataSource];
     NSString *destPath = [destFoldername stringByAppendingPathComponent:destFileName];
     NSString *destPathOrRev = nil;
     if (rev != nil) {
@@ -201,9 +220,9 @@ typedef enum {
     
     self.downloadForMerge = YES;
     
-    NSString *destFileName = [self.dataSource destinationFileNameInController:self];
-    NSString *destFoldername = [self.dataSource destinationFolderInController:self];
-    NSURL *url = [self.dataSource URLForFileToSyncInController:self withUserId:[self userId]];
+    NSString *destFileName = [self destFileNameFromDataSource];
+    NSString *destFoldername = [self destFolderFromDataSource];
+    NSURL *url = [self localURLFromDataSource];
     
     NSString *destPath = [destFoldername stringByAppendingPathComponent:destFileName];
     
@@ -250,7 +269,7 @@ typedef enum {
     
     DBLocalMetadata *localMetadata = [self localMetadata];
     
-    NSURL *fileURL = [self.dataSource URLForFileToSyncInController:self withUserId:[self userId]];
+    NSURL *fileURL = [self localURLFromDataSource];
     if (![[NSFileManager defaultManager] fileExistsAtPath:fileURL.path]) {
         
         /* The file doesn't exist,
@@ -439,8 +458,8 @@ typedef enum {
                  * Step 1
                  * Download metadata for the file
                  */
-                NSString *destFileName = [self.dataSource destinationFileNameInController:self];
-                NSString *destFoldername = [self.dataSource destinationFolderInController:self];
+                NSString *destFileName = [self destFileNameFromDataSource];
+                NSString *destFoldername = [self destFolderFromDataSource];
                 NSString *path = [destFoldername stringByAppendingPathComponent:destFileName];
                 
                 // v1
