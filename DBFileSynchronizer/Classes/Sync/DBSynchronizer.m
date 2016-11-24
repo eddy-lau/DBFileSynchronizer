@@ -29,7 +29,7 @@ NSString *DBSynchronizerDidFailNotification = @"DBSynchronizerDidFailNotificatio
     
     self = [super init];
     if (self) {
-        self.fileSynchronizer = [[[DBFileSynchronizer alloc] init] autorelease];
+        self.fileSynchronizer = [[DBFileSynchronizer alloc] init];
         self.fileSynchronizer.dataSource = self;
         self.fileSynchronizer.delegate = self;
     }
@@ -40,7 +40,6 @@ NSString *DBSynchronizerDidFailNotification = @"DBSynchronizerDidFailNotificatio
 - (void) dealloc {
     self.fileSynchronizer = nil;
     self.syncable = nil;
-    [super dealloc];
 }
 
 #pragma mark private methods

@@ -43,13 +43,14 @@ enum {
 
 - (void) dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [super dealloc];
 }
 
 - (void)loadView {
     
     CGRect rect = [UIScreen mainScreen].applicationFrame;
-    self.tableView = [[[UITableView alloc] initWithFrame:rect style:UITableViewStyleGrouped] autorelease];
+    
+    UITableView *tableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStyleGrouped];
+    self.tableView = tableView;
     self.tableView.autoresizingMask |= UIViewAutoresizingFlexibleHeight;
     self.tableView.autoresizingMask |= UIViewAutoresizingFlexibleWidth;
     self.tableView.dataSource = self;
@@ -99,8 +100,8 @@ enum {
     NSString *text = [NSString stringWithFormat:L(@"當你登入了 Dropbox 賬戶後，你的資料會自動備份到《應用/%@》資料夾。"), appName];
     
     
-    UIView *view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 130)] autorelease];
-    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(20, 20, view.bounds.size.width-40, view.bounds.size.height - 40)] autorelease];
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 130)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, view.bounds.size.width-40, view.bounds.size.height - 40)];
     label.numberOfLines = 1000;
     label.backgroundColor = [UIColor clearColor];
     label.autoresizingMask |= UIViewAutoresizingFlexibleHeight;
@@ -117,7 +118,7 @@ enum {
     NSDate *date = [self.delegate lastSynchronizedTimeForSyncSettingViewController:self];
     
     if (date != nil) {
-        NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateStyle:NSDateFormatterShortStyle];
         [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
         [dateFormatter setDoesRelativeDateFormatting:YES];
@@ -129,8 +130,8 @@ enum {
                                                             timeStyle: NSDateFormatterShortStyle];
         
         
-        UIView *view = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 120)] autorelease];
-        UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(20, 20, view.bounds.size.width-40, view.bounds.size.height - 40)] autorelease];
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 120)];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, view.bounds.size.width-40, view.bounds.size.height - 40)];
         label.font = [UIFont systemFontOfSize:14];
         label.textAlignment = NSTextAlignmentCenter;
         label.textColor = [UIColor grayColor];
@@ -172,7 +173,7 @@ enum {
             NSString *cellId = @"dbAccountInfoCell";
             DBAccountInfoCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
             if (cell == nil) {
-                cell = [[[DBAccountInfoCell alloc] initWithReuseIdentifier:cellId] autorelease];
+                cell = [[DBAccountInfoCell alloc] initWithReuseIdentifier:cellId];
             }
             
             [cell reload];
@@ -184,7 +185,7 @@ enum {
             NSString *cellId = @"dbConnectButtonCell";
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
             if (cell == nil) {
-                cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId] autorelease];
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
                 cell.textLabel.textAlignment = NSTextAlignmentLeft;
                 cell.textLabel.textColor = [UIColor colorWithRed:0.0 green:122.0/255.0 blue:255.0/255.0 alpha:1.0];
             }
@@ -225,7 +226,7 @@ enum {
     
     if (section == SECTION_DROPBOX_ACCOUNT) {
         
-        UILabel *footerLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 30)] autorelease];
+        UILabel *footerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 30)];
         footerLabel.backgroundColor = [UIColor clearColor];
         footerLabel.textColor = [UIColor grayColor];
         footerLabel.font = [UIFont systemFontOfSize:14.0];
@@ -284,10 +285,10 @@ enum {
                 
                 NSString *title = L(@"Disconnect");
                 NSString *message = L(@"Are you sure you want to disconnect Dropbox?");
-                self.confirmDisconnectAlert = [[[UIAlertView alloc] initWithTitle:title
+                self.confirmDisconnectAlert = [[UIAlertView alloc] initWithTitle:title
                                                                          message:message delegate:self
                                                                cancelButtonTitle:L(@"Cancel")
-                                                                otherButtonTitles:L(@"Disconnect"), nil] autorelease];
+                                                                otherButtonTitles:L(@"Disconnect"), nil];
                 
                 [self.confirmDisconnectAlert show];
                 

@@ -30,7 +30,6 @@ typedef enum {
 
 - (void) dealloc {
     self.restClient = nil;
-    [super dealloc];
 }
 
 - (NSString *) userId {
@@ -119,9 +118,9 @@ typedef enum {
         DBFILESWriteMode *writeMode = nil;
         
         if (rev) {
-            writeMode = [[[DBFILESWriteMode alloc] initWithUpdate:rev] autorelease];
+            writeMode = [[DBFILESWriteMode alloc] initWithUpdate:rev];
         } else {
-            writeMode = [[[DBFILESWriteMode alloc] initWithAdd] autorelease];
+            writeMode = [[DBFILESWriteMode alloc] initWithAdd];
         }
         
         NSString *destPath = [destFoldername stringByAppendingPathComponent:destFileName];
@@ -130,7 +129,7 @@ typedef enum {
                 
                 if (fileMetadata) {
                     
-                    DBMetadata *metadata = [[[DBMetadata alloc] initWithFilesMetadata:fileMetadata] autorelease];
+                    DBMetadata *metadata = [[DBMetadata alloc] initWithFilesMetadata:fileMetadata];
                     [self restClient:self.restClient uploadedFile:destFileName from:url.path metadata:metadata];
                     
                 } else {
@@ -177,7 +176,7 @@ typedef enum {
             
             if (fileMetadata) {
                 
-                DBMetadata *metadata = [[[DBMetadata alloc] initWithFilesMetadata:fileMetadata] autorelease];
+                DBMetadata *metadata = [[DBMetadata alloc] initWithFilesMetadata:fileMetadata];
                 [self restClient:self.restClient loadedFile:url.path contentType:@"" metadata:metadata];
                 
             } else {
@@ -224,7 +223,7 @@ typedef enum {
          
          if (fileMetadata) {
              
-             DBMetadata *metadata = [[[DBMetadata alloc] initWithFilesMetadata:fileMetadata] autorelease];
+             DBMetadata *metadata = [[DBMetadata alloc] initWithFilesMetadata:fileMetadata];
              [self restClient:self.restClient loadedFile:destPath contentType:@"" metadata:metadata];
              
          } else {
@@ -452,7 +451,7 @@ typedef enum {
                     response:^(DBFILESMetadata *filesMetadata, DBFILESGetMetadataError *routeError, DBError *error) {
 
                         if (filesMetadata && [filesMetadata isKindOfClass:[DBFILESFileMetadata class]]) {
-                            DBMetadata *metadata = [[[DBMetadata alloc] initWithFilesMetadata:(DBFILESFileMetadata *)filesMetadata] autorelease];
+                            DBMetadata *metadata = [[DBMetadata alloc] initWithFilesMetadata:(DBFILESFileMetadata *)filesMetadata];
                             [self restClient:self.restClient loadedMetadata:metadata];
                         } else {
                            

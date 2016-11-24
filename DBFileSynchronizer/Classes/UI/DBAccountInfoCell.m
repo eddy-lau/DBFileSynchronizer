@@ -59,7 +59,7 @@
                     
                 }];
             
-            UIActivityIndicatorView *activityIndicator = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
+            UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
             [activityIndicator startAnimating];
             activityIndicator.hidden = NO;
             
@@ -82,7 +82,7 @@
     
     if (client == self.restClient) {
         
-        [[client retain] autorelease];
+        DropboxClient *retainCycle = client;
         
         self.accountInfo = info;
         self.accessoryView = nil;
@@ -90,6 +90,8 @@
         
         self.restClient = nil;
         [self setNeedsLayout];
+        
+        retainCycle = nil;
     }
     
 }
