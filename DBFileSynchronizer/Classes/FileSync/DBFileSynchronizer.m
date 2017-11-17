@@ -10,6 +10,14 @@
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 #import "DBLocalMetadata.h"
 
+@interface DBError (extension)
+
+@property (nonatomic,readonly) BOOL isPathNotFoundError;
+
+@end
+
+
+
 typedef enum {
     SYNC_MODE_UNKNOWN,
     SYNC_MODE_MERGE,
@@ -467,19 +475,27 @@ typedef enum {
                 
                 // v2
                 [[[self.restClient filesRoutes] getMetadata:path]
-                    response:^(DBFILESMetadata *filesMetadata, DBFILESGetMetadataError *routeError, DBError *error) {
+                    response:^(DBFILESMetadata *filesMetadata, DBFILESGetMetadataError *routeError, DBError *dbError) {
 
                         if (filesMetadata && [filesMetadata isKindOfClass:[DBFILESFileMetadata class]]) {
                             DBMetadata *metadata = [[DBMetadata alloc] initWithFilesMetadata:(DBFILESFileMetadata *)filesMetadata];
                             [self restClient:self.restClient loadedMetadata:metadata];
+                            
+                        } else if (dbError.isPathNotFoundError) {
+                            
+                            /*
+                             * The metadata or the file doesn't exist on Dropbox.
+                             * Just upload the local file.
+                             */
+                            [self uploadFileWithParentRev:nil];
+                            
                         } else {
                            
-                            NSString *message =
-                                [NSString stringWithFormat:@"Couldn't get metadata: %@ - %@", path, error.description];
+                            NSString *message = dbError.errorContent;
                             
                             NSError *error =
                                 [NSError errorWithDomain:@"DBFileSynchronizer"
-                                                    code:-1
+                                                    code:dbError.statusCode.integerValue
                                                 userInfo:@{NSLocalizedDescriptionKey:message}];
                             
                             [self restClient:self.restClient loadMetadataFailedWithError:error];
@@ -520,5 +536,14 @@ typedef enum {
     return [self localMetadata].lastModifiedDate;
 }
 
+@end
+
+@implementation DBError (extension)
+
+- (BOOL) isPathNotFoundError {
+    return self.tag == DBRequestErrorHttp &&
+    self.statusCode.integerValue == 409 &&
+    [self.errorContent hasPrefix:@"path/not_found"];
+}
 
 @end
