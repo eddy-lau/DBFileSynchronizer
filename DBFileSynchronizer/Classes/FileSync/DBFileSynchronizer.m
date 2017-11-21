@@ -483,11 +483,15 @@ typedef enum {
                             
                         } else if (dbError.isPathNotFoundError) {
                             
-                            /*
-                             * The metadata or the file doesn't exist on Dropbox.
-                             * Just upload the local file.
-                             */
-                            [self uploadFileWithParentRev:nil];
+                            @try {
+                                /*
+                                 * The metadata or the file doesn't exist on Dropbox.
+                                 * Just upload the local file.
+                                 */
+                                [self uploadFileWithParentRev:nil];
+                            } @catch( NSException *exception) {
+                                NSLog(@"We crashed: %@", exception);
+                            }
                             
                         } else {
                            
