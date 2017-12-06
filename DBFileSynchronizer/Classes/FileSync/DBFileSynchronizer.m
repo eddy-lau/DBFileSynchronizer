@@ -496,6 +496,9 @@ typedef enum {
                         } else {
                            
                             NSString *message = dbError.errorContent;
+                            if (message == nil) {
+                                message = [NSString stringWithFormat:@"Error message: %@", dbError.description];
+                            }
                             
                             NSError *error =
                                 [NSError errorWithDomain:@"DBFileSynchronizer"
