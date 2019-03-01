@@ -97,7 +97,7 @@ enum {
 - (UIView *) tableHeaderView {
     
     NSString *appName = [self.delegate appNameForSyncSettingViewController:self];
-    NSString *text = [NSString stringWithFormat:L(@"當你登入了 Dropbox 賬戶後，你的資料會自動備份到《應用/%@》資料夾。"), appName];
+    NSString *text = [NSString stringWithFormat:L(@"當你登入了 Dropbox 帳戶後，你的資料會自動備份到《應用/%@》資料夾。"), appName];
     
     
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 130)];
@@ -233,9 +233,9 @@ enum {
         footerLabel.textAlignment = NSTextAlignmentCenter;
         
         if (self.isLinked) {
-            footerLabel.text = L(@"按下登出 Dropbox 賬戶"); //ZHLocalizedString(@"Tap to disconnect this Dropbox account", @"");
+            footerLabel.text = L(@"按下登出 Dropbox 帳戶"); //ZHLocalizedString(@"Tap to disconnect this Dropbox account", @"");
         } else {
-            footerLabel.text = L(@"按下登入 Dropbox 賬戶"); //ZHLocalizedString(@"Tap to connect a Dropbox account", @"");
+            footerLabel.text = L(@"按下登入 Dropbox 帳戶"); //ZHLocalizedString(@"Tap to connect a Dropbox account", @"");
         }
         
         return footerLabel;
