@@ -49,7 +49,7 @@
             self.detailTextLabel.text = nil;
             self.restClient = [DropboxClientsManager authorizedClient];
             [[self.restClient.usersRoutes getCurrentAccount]
-                response:^(DBUSERSFullAccount *account, DBNilObject * nilObject, DBError * error) {
+                response:^(DBUSERSFullAccount *account, DBNilObject * nilObject, DBRequestError * error) {
                     
                     if (account) {
                         [self restClient:self.restClient loadedAccountInfo:account];

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'DBFileSynchronizer'
-  s.version          = '1.1.0'
+  s.version          = '1.2.0'
   s.summary          = 'Dropbox file sync utilities'
   s.description      = <<-DESC
 Objective-C utilities classes for syncing objects or files on Dropbox
@@ -15,5 +15,5 @@ Objective-C utilities classes for syncing objects or files on Dropbox
     'DBFileSynchronizer/Classes/FileSync/{DBLocalMetadata,DBMetadata}.h',
     'DBFileSynchronizer/Classes/UI/DBAccountInfoCell.h'
   ]
-  s.dependency 'ObjectiveDropboxOfficial', '~> 1.1.5'
+  s.dependency 'ObjectiveDropboxOfficial', '~> 2.0'
 end

@@ -10,7 +10,7 @@
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 #import "DBLocalMetadata.h"
 
-@interface DBError (extension)
+@interface DBRequestError (extension)
 
 @property (nonatomic,readonly) BOOL isPathNotFoundError;
 
@@ -152,7 +152,7 @@ typedef enum {
         
         NSString *destPath = [destFoldername stringByAppendingPathComponent:destFileName];
         [[self.restClient.filesRoutes uploadUrl:destPath mode:writeMode autorename:@NO clientModified:nil mute:@NO inputUrl:url]
-            response:^(DBFILESFileMetadata *fileMetadata, DBFILESUploadError *routeError, DBError *error) {
+            response:^(DBFILESFileMetadata *fileMetadata, DBFILESUploadError *routeError, DBRequestError *error) {
                 
                 if (fileMetadata) {
                     
@@ -199,7 +199,7 @@ typedef enum {
     
     // v2
     [[[self.restClient filesRoutes] downloadUrl:destPathOrRev rev:nil overwrite:YES destination:url]
-        response:^(DBFILESFileMetadata *fileMetadata, DBFILESDownloadError *routeError, DBError *error, NSURL *url) {
+        response:^(DBFILESFileMetadata *fileMetadata, DBFILESDownloadError *routeError, DBRequestError *error, NSURL *url) {
             
             if (fileMetadata) {
                 
@@ -246,7 +246,7 @@ typedef enum {
     
     // v2
     [[[self.restClient filesRoutes] downloadUrl:destPathOrRev rev:nil overwrite:YES destination:url]
-     response:^(DBFILESFileMetadata *fileMetadata, DBFILESDownloadError *routeError, DBError *error, NSURL *url) {
+     response:^(DBFILESFileMetadata *fileMetadata, DBFILESDownloadError *routeError, DBRequestError *error, NSURL *url) {
          
          if (fileMetadata) {
              
@@ -456,7 +456,7 @@ typedef enum {
     // v2
     // Step 0
     [[[self.restClient usersRoutes] getCurrentAccount]
-        response:^(DBUSERSFullAccount *account, DBNilObject *nilObj, DBError *error) {
+        response:^(DBUSERSFullAccount *account, DBNilObject *nilObj, DBRequestError *error) {
             
             if (account) {
                 
@@ -475,7 +475,7 @@ typedef enum {
                 
                 // v2
                 [[[self.restClient filesRoutes] getMetadata:path]
-                    response:^(DBFILESMetadata *filesMetadata, DBFILESGetMetadataError *routeError, DBError *dbError) {
+                    response:^(DBFILESMetadata *filesMetadata, DBFILESGetMetadataError *routeError, DBRequestError *dbError) {
 
                         if (filesMetadata && [filesMetadata isKindOfClass:[DBFILESFileMetadata class]]) {
                             DBMetadata *metadata = [[DBMetadata alloc] initWithFilesMetadata:(DBFILESFileMetadata *)filesMetadata];
@@ -545,7 +545,7 @@ typedef enum {
 
 @end
 
-@implementation DBError (extension)
+@implementation DBRequestError (extension)
 
 - (BOOL) isPathNotFoundError {
     return self.tag == DBRequestErrorHttp &&
