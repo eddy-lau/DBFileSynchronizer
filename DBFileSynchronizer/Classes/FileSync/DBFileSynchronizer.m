@@ -151,7 +151,8 @@ typedef enum {
         }
         
         NSString *destPath = [destFoldername stringByAppendingPathComponent:destFileName];
-        [[self.restClient.filesRoutes uploadUrl:destPath mode:writeMode autorename:@NO clientModified:nil mute:@NO inputUrl:url.absoluteString]
+        
+        [[self.restClient.filesRoutes uploadUrl:destPath mode:writeMode autorename:@NO clientModified:nil mute:@NO propertyGroups:nil strictConflict:@NO inputUrl:url.absoluteString]
             setResponseBlock:^(DBFILESFileMetadata *fileMetadata, DBFILESUploadError *routeError, DBRequestError *error) {
                 
                 if (fileMetadata) {

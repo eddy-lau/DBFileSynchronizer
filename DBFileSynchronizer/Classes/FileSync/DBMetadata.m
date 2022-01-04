@@ -98,8 +98,8 @@
         isDeleted = NO; // See below
         videoDuration = 0;
         
-        for (DBPROPERTIESPropertyGroup *propertyGroup in filesMetadata.propertyGroups) {
-            for (DBPROPERTIESPropertyField *field in propertyGroup.fields) {
+        for (DBFILEPROPERTIESPropertyGroup *propertyGroup in filesMetadata.propertyGroups) {
+            for (DBFILEPROPERTIESPropertyField *field in propertyGroup.fields) {
                 if ([field.name isEqualToString:@"tag"]) {
                     isDirectory = [field.value isEqualToString:@"folder"];
                     isDeleted = [field.value isEqualToString:@"deleted"];
