@@ -24,29 +24,28 @@
 
     NSLog(@"application handle url: %@", url);
     
-    DBOAuthResult *authResult = [DBClientsManager handleRedirectURL:url];
-    if (authResult != nil) {
+    return [DBClientsManager handleRedirectURL:url completion:^(DBOAuthResult * _Nullable authResult) {
         
-        if ([authResult isSuccess]) {
+        if (authResult != nil) {
             
-//            [[BackupManager instance] sync];
-            [DBSyncSettingViewController refresh];
-            return YES;
-            
-        } else if ([authResult isCancel]) {
-            
-            NSLog(@"Authorization flow was manually canceled by user!");
-            
-        } else if ([authResult isError]) {
-            
-            NSLog(@"Error: %@", authResult);
+            if ([authResult isSuccess]) {
+                
+    //            [[BackupManager instance] sync];
+                [DBSyncSettingViewController refresh];
+                
+            } else if ([authResult isCancel]) {
+                
+                NSLog(@"Authorization flow was manually canceled by user!");
+                
+            } else if ([authResult isError]) {
+                
+                NSLog(@"Error: %@", authResult);
+                
+            }
             
         }
-        return NO;
         
-    }
-    
-    return NO;
+    }];
 }
 
 
