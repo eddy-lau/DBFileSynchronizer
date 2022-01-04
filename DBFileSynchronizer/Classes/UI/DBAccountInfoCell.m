@@ -11,7 +11,7 @@
 
 @interface DBAccountInfoCell ()
 
-@property (nonatomic,retain) DropboxClient *restClient;
+@property (nonatomic,retain) DBUserClient *restClient;
 @property (nonatomic,retain) DBUSERSAccount *accountInfo;
 @property (nonatomic,readonly) BOOL isLinked;
 
@@ -38,7 +38,7 @@
 }
 
 - (BOOL) isLinked {
-    return [DropboxClientsManager authorizedClient] != nil;
+    return [DBClientsManager authorizedClient] != nil;
 }
 
 - (void) reload {
@@ -47,9 +47,9 @@
 
         if (self.accountInfo == nil) {
             self.detailTextLabel.text = nil;
-            self.restClient = [DropboxClientsManager authorizedClient];
+            self.restClient = [DBClientsManager authorizedClient];
             [[self.restClient.usersRoutes getCurrentAccount]
-                response:^(DBUSERSFullAccount *account, DBNilObject * nilObject, DBRequestError * error) {
+                setResponseBlock:^(DBUSERSFullAccount *account, DBNilObject * nilObject, DBRequestError * error) {
                     
                     if (account) {
                         [self restClient:self.restClient loadedAccountInfo:account];
@@ -78,11 +78,11 @@
     
 }
 
-- (void)restClient:(DropboxClient *)client loadedAccountInfo:(DBUSERSAccount *)info {
+- (void)restClient:(DBUserClient *)client loadedAccountInfo:(DBUSERSAccount *)info {
     
     if (client == self.restClient) {
         
-        DropboxClient *retainCycle = client;
+        DBUserClient *retainCycle = client;
         
         self.accountInfo = info;
         self.accessoryView = nil;

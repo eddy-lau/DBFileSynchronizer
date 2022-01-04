@@ -25,4 +25,6 @@
 @property (nonatomic,readonly) UITableView *tableView;
 @property (nonatomic,assign) id<DBSyncSettingViewControllerDelegate>   delegate;
 
++ (void) refresh;
+
 @end

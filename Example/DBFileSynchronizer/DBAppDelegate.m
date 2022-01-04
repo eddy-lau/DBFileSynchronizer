@@ -7,14 +7,48 @@
 //
 
 #import "DBAppDelegate.h"
+#import "DBSyncSettingViewController.h"
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 
 @implementation DBAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    [DBClientsManager setupWithAppKey:@"jjhuwk15reuo8e2"];
+
     return YES;
 }
+
+- (BOOL) application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+
+    NSLog(@"application handle url: %@", url);
+    
+    DBOAuthResult *authResult = [DBClientsManager handleRedirectURL:url];
+    if (authResult != nil) {
+        
+        if ([authResult isSuccess]) {
+            
+//            [[BackupManager instance] sync];
+            [DBSyncSettingViewController refresh];
+            return YES;
+            
+        } else if ([authResult isCancel]) {
+            
+            NSLog(@"Authorization flow was manually canceled by user!");
+            
+        } else if ([authResult isError]) {
+            
+            NSLog(@"Error: %@", authResult);
+            
+        }
+        return NO;
+        
+    }
+    
+    return NO;
+}
+
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {

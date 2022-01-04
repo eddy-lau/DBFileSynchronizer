@@ -27,7 +27,7 @@ typedef enum {
 
 @interface DBFileSynchronizer ()
 
-@property (nonatomic,retain) DropboxClient *restClient;
+@property (nonatomic,retain) DBUserClient *restClient;
 @property (nonatomic,copy)   NSString *accountId;
 @property (nonatomic)        BOOL downloadForMerge;
 
@@ -151,8 +151,8 @@ typedef enum {
         }
         
         NSString *destPath = [destFoldername stringByAppendingPathComponent:destFileName];
-        [[self.restClient.filesRoutes uploadUrl:destPath mode:writeMode autorename:@NO clientModified:nil mute:@NO inputUrl:url]
-            response:^(DBFILESFileMetadata *fileMetadata, DBFILESUploadError *routeError, DBRequestError *error) {
+        [[self.restClient.filesRoutes uploadUrl:destPath mode:writeMode autorename:@NO clientModified:nil mute:@NO inputUrl:url.absoluteString]
+            setResponseBlock:^(DBFILESFileMetadata *fileMetadata, DBFILESUploadError *routeError, DBRequestError *error) {
                 
                 if (fileMetadata) {
                     
@@ -199,7 +199,7 @@ typedef enum {
     
     // v2
     [[[self.restClient filesRoutes] downloadUrl:destPathOrRev rev:nil overwrite:YES destination:url]
-        response:^(DBFILESFileMetadata *fileMetadata, DBFILESDownloadError *routeError, DBRequestError *error, NSURL *url) {
+        setResponseBlock:^(DBFILESFileMetadata *fileMetadata, DBFILESDownloadError *routeError, DBRequestError *error, NSURL *url) {
             
             if (fileMetadata) {
                 
@@ -246,7 +246,7 @@ typedef enum {
     
     // v2
     [[[self.restClient filesRoutes] downloadUrl:destPathOrRev rev:nil overwrite:YES destination:url]
-     response:^(DBFILESFileMetadata *fileMetadata, DBFILESDownloadError *routeError, DBRequestError *error, NSURL *url) {
+     setResponseBlock:^(DBFILESFileMetadata *fileMetadata, DBFILESDownloadError *routeError, DBRequestError *error, NSURL *url) {
          
          if (fileMetadata) {
              
@@ -273,7 +273,7 @@ typedef enum {
 
 #pragma mark DBRestClientDelegate
 
-- (void) restClient:(DropboxClient *)client loadedMetadata:(DBMetadata *)metadata {
+- (void) restClient:(DBUserClient *)client loadedMetadata:(DBMetadata *)metadata {
     
     DBLocalMetadata *localMetadata = [self localMetadata];
     
@@ -353,7 +353,7 @@ typedef enum {
     
 }
 
-- (void) restClient:(DropboxClient *)client loadMetadataFailedWithError:(NSError *)error {
+- (void) restClient:(DBUserClient *)client loadMetadataFailedWithError:(NSError *)error {
     
     BOOL fileNotFound = error.code == 404 && [error.domain isEqualToString:@"dropbox.com"];
     
@@ -375,7 +375,7 @@ typedef enum {
     
 }
 
-- (void) restClient:(DropboxClient *)client loadedFile:(NSString *)destPath contentType:(NSString *)contentType metadata:(DBMetadata *)metadata {
+- (void) restClient:(DBUserClient *)client loadedFile:(NSString *)destPath contentType:(NSString *)contentType metadata:(DBMetadata *)metadata {
 
     if (self.downloadForMerge) {
         
@@ -409,7 +409,7 @@ typedef enum {
     
 }
 
-- (void) restClient:(DropboxClient *)client loadFileFailedWithError:(NSError *)error {
+- (void) restClient:(DBUserClient *)client loadFileFailedWithError:(NSError *)error {
     
     NSLog (@"Error: %@", error);
     if ([self.delegate respondsToSelector:@selector(fileSynchronizer:didFailWithError:)]) {
@@ -418,7 +418,7 @@ typedef enum {
     
 }
 
-- (void) restClient:(DropboxClient *)client uploadedFile:(NSString *)destPath from:(NSString *)srcPath metadata:(DBMetadata *)metadata {
+- (void) restClient:(DBUserClient *)client uploadedFile:(NSString *)destPath from:(NSString *)srcPath metadata:(DBMetadata *)metadata {
     
     NSLog (@"Uploaded: %@", destPath);
     [self saveLocalMetadata:metadata];
@@ -428,7 +428,7 @@ typedef enum {
     }
 }
 
-- (void) restClient:(DropboxClient *)client uploadFileFailedWithError:(NSError *)error {
+- (void) restClient:(DBUserClient *)client uploadFileFailedWithError:(NSError *)error {
     
     NSLog (@"Sync upload failed: %@", error);
     if ([self.delegate respondsToSelector:@selector(fileSynchronizer:didFailWithError:)]) {
@@ -444,7 +444,7 @@ typedef enum {
 
 - (void) sync {
     
-    DropboxClient *authorizedClient = [DropboxClientsManager authorizedClient];
+    DBUserClient *authorizedClient = [DBClientsManager authorizedClient];
     if (authorizedClient == nil) {
         return;
     }
@@ -456,7 +456,7 @@ typedef enum {
     // v2
     // Step 0
     [[[self.restClient usersRoutes] getCurrentAccount]
-        response:^(DBUSERSFullAccount *account, DBNilObject *nilObj, DBRequestError *error) {
+        setResponseBlock:^(DBUSERSFullAccount *account, DBNilObject *nilObj, DBRequestError *error) {
             
             if (account) {
                 
@@ -475,7 +475,7 @@ typedef enum {
                 
                 // v2
                 [[[self.restClient filesRoutes] getMetadata:path]
-                    response:^(DBFILESMetadata *filesMetadata, DBFILESGetMetadataError *routeError, DBRequestError *dbError) {
+                    setResponseBlock:^(DBFILESMetadata *filesMetadata, DBFILESGetMetadataError *routeError, DBRequestError *dbError) {
 
                         if (filesMetadata && [filesMetadata isKindOfClass:[DBFILESFileMetadata class]]) {
                             DBMetadata *metadata = [[DBMetadata alloc] initWithFilesMetadata:(DBFILESFileMetadata *)filesMetadata];

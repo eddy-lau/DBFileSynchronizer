@@ -12,6 +12,9 @@
 
 #define L(s) ([self localizedText:(s)])
 
+NSString *DBAccountDidLinkNotification = @"DropboxAccountDidLinkNotification";
+
+
 enum {
     SECTION_DROPBOX_ACCOUNT = 0,
     SECTION_COUNT
@@ -25,7 +28,6 @@ enum {
 >
 
 @property (nonatomic,assign) UITableView *tableView;
-@property (nonatomic,retain) UIAlertView *confirmDisconnectAlert;
 @property (nonatomic,readonly) BOOL isLinked;
 
 @end
@@ -47,7 +49,7 @@ enum {
 
 - (void)loadView {
     
-    CGRect rect = [UIScreen mainScreen].applicationFrame;
+    CGRect rect = [UIScreen mainScreen].bounds;
     
     UITableView *tableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStyleGrouped];
     self.tableView = tableView;
@@ -66,6 +68,11 @@ enum {
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(dropboxAccountDidLinkNotification:)
+                                                 name:DBAccountDidLinkNotification
+                                               object:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -91,7 +98,7 @@ enum {
 #pragma mark private methods
 
 - (BOOL) isLinked {
-    return [DropboxClientsManager authorizedClient] != nil;
+    return [DBClientsManager authorizedClient] != nil;
 }
 
 - (UIView *) tableHeaderView {
@@ -276,21 +283,37 @@ enum {
                 //[[DBSession sharedSession] linkFromController:self];
                 
                 // v2
-                [DropboxClientsManager authorizeFromController:[UIApplication sharedApplication]
+                [DBClientsManager authorizeFromController:[UIApplication sharedApplication]
                                                     controller:self
-                                                       openURL:^(NSURL *url){ [[UIApplication sharedApplication] openURL:url]; }
-                                                   browserAuth:YES];
+                                                  openURL:^(NSURL *url){ [[UIApplication sharedApplication] openURL:url]; }];
+                
                 
             } else {
                 
                 NSString *title = L(@"Disconnect");
                 NSString *message = L(@"Are you sure you want to disconnect Dropbox?");
-                self.confirmDisconnectAlert = [[UIAlertView alloc] initWithTitle:title
-                                                                         message:message delegate:self
-                                                               cancelButtonTitle:L(@"Cancel")
-                                                                otherButtonTitles:L(@"Disconnect"), nil];
+                UIAlertController *alert =
+                    [UIAlertController alertControllerWithTitle:title message:message
+                                                 preferredStyle:UIAlertControllerStyleAlert];
                 
-                [self.confirmDisconnectAlert show];
+                [alert addAction:
+                    [UIAlertAction actionWithTitle:L(@"Cancel") style:UIAlertActionStyleCancel handler:nil]
+                ];
+                
+                [alert addAction:
+                    [UIAlertAction actionWithTitle:L(@"Disconnect") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                        
+                        [DBClientsManager unlinkAndResetClients];
+                        [self.tableView reloadData];
+                        
+                        if ([self.delegate respondsToSelector:@selector(syncSettingViewControllerDidLogout:)]) {
+                            [self.delegate syncSettingViewControllerDidLogout:self];
+                        }
+                        
+                    }]
+                ];
+                
+                [self presentViewController:alert animated:YES completion:nil];
                 
                 [tableView deselectRowAtIndexPath:indexPath animated:YES];
                 
@@ -303,21 +326,13 @@ enum {
     
 }
 
-#pragma mark UIAlertViewDelegate
-
-- (void) alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    
-    if (buttonIndex == 1) {
-        [DropboxClientsManager unlinkClients];
-        [self.tableView reloadData];
-        
-        if ([self.delegate respondsToSelector:@selector(syncSettingViewControllerDidLogout:)]) {
-            [self.delegate syncSettingViewControllerDidLogout:self];
-        }
-    }
-}
-
 #pragma mark DropboxAccount notification
+
++ (void) refresh {
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:DBAccountDidLinkNotification object:nil];
+
+}
 
 - (void) dropboxAccountDidLinkNotification:(NSNotification *)notification {
     [self.tableView reloadData];
