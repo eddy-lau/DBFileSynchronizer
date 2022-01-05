@@ -1,0 +1,23 @@
+PODS:
+  - DBFileSynchronizer (1.2.0):
+    - ObjectiveDropboxOfficial (~> 6.0)
+  - ObjectiveDropboxOfficial (6.2.3)
+
+DEPENDENCIES:
+  - DBFileSynchronizer (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - ObjectiveDropboxOfficial
+
+EXTERNAL SOURCES:
+  DBFileSynchronizer:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  DBFileSynchronizer: 44e14fff6681858847402f49efc568f7c70fa05b
+  ObjectiveDropboxOfficial: fe206ce8c0bc49976c249d472db7fdbc53ebbd53
+
+PODFILE CHECKSUM: 96fc016075775ef9525f39683d46f88a5911d7a0
+
+COCOAPODS: 1.10.1
