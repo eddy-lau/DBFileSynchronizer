@@ -12,21 +12,21 @@
 @class DBSyncSettingViewController;
 @protocol DBSyncSettingViewControllerDelegate <NSObject>
 
-- (NSDate *) lastSynchronizedTimeForSyncSettingViewController:(DBSyncSettingViewController *)controller;
-- (NSString *) appNameForSyncSettingViewController:(DBSyncSettingViewController *)controller;
+- (NSDate * _Nullable) lastSynchronizedTimeForSyncSettingViewController:(DBSyncSettingViewController * _Nonnull)controller;
+- (NSString * _Nonnull) appNameForSyncSettingViewController:(DBSyncSettingViewController * _Nonnull)controller;
 
 @optional
-- (NSString *) localizedStringForSyncSettingViewController:(DBSyncSettingViewController *)controller ofText:(NSString *)text;
-- (void) syncSettingViewControllerDidLogin:(DBSyncSettingViewController *)controller;
-- (void) syncSettingViewControllerDidLogout:(DBSyncSettingViewController *)controller;
+- (NSString * _Nonnull) localizedStringForSyncSettingViewController:(DBSyncSettingViewController * _Nonnull)controller ofText:(NSString * _Nonnull)text;
+- (void) syncSettingViewControllerDidLogin:(DBSyncSettingViewController * _Nonnull)controller;
+- (void) syncSettingViewControllerDidLogout:(DBSyncSettingViewController * _Nonnull)controller;
 
 @end
 
 @interface DBSyncSettingViewController : UIViewController
 
-@property (nonatomic,readonly) UITableView *tableView;
-@property (nonatomic,assign) id<DBSyncSettingViewControllerDelegate>   delegate;
+@property (nonatomic,readonly) UITableView * _Nullable tableView;
+@property (nonatomic,assign) id<DBSyncSettingViewControllerDelegate> _Nullable delegate;
 
-+ (void) refreshWithAuthResult:(DBOAuthResult *)authResult;
++ (void) refreshWithAuthResult:(DBOAuthResult * _Nullable)authResult;
 
 @end

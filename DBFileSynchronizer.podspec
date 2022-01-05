@@ -12,7 +12,7 @@ Objective-C utilities classes for syncing objects or files on Dropbox
   s.ios.deployment_target = '9.0'
   s.source_files = 'DBFileSynchronizer/Classes/**/*'
   s.private_header_files = [
-    'DBFileSynchronizer/Classes/FileSync/{DBLocalMetadata,DBMetadata}.h',
+    'DBFileSynchronizer/Classes/FileSync/*.h',
     'DBFileSynchronizer/Classes/UI/DBAccountInfoCell.h'
   ]
   s.dependency 'ObjectiveDropboxOfficial', '~> 6.0'

@@ -15,7 +15,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  DBFileSynchronizer: 1b26563f84e160c9eb31d93d5a3a5048e05ff09f
+  DBFileSynchronizer: 53f46284863e90cc91be7caed483568b8505c553
   ObjectiveDropboxOfficial: fe206ce8c0bc49976c249d472db7fdbc53ebbd53
 
 PODFILE CHECKSUM: ff62731bfac08eb9a2f927a685e51281dab0a84b

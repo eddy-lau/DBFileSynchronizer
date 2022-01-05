@@ -76,20 +76,20 @@ extension MainViewController {
 
 extension MainViewController : DBSyncSettingViewControllerDelegate {
     
-    func lastSynchronizedTime(for controller: DBSyncSettingViewController!) -> Date! {
+    func lastSynchronizedTime(for controller: DBSyncSettingViewController) -> Date? {
         return synchronizer.lastModifiedDate
     }
     
-    func appName(for controller: DBSyncSettingViewController!) -> String! {
+    func appName(for controller: DBSyncSettingViewController) -> String {
         return "DBFileSynchronizer"
     }
     
-    func syncSettingViewControllerDidLogin(_ controller: DBSyncSettingViewController!) {
+    func syncSettingViewControllerDidLogin(_ controller: DBSyncSettingViewController) {
         syncButton.isEnabled = isLinked
         synchronizer.sync()
     }
     
-    func syncSettingViewControllerDidLogout(_ controller: DBSyncSettingViewController!) {
+    func syncSettingViewControllerDidLogout(_ controller: DBSyncSettingViewController) {
         syncButton.isEnabled = isLinked
     }
     
