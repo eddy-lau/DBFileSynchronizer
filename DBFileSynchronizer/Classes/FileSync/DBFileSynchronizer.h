@@ -12,7 +12,6 @@
 
 @interface DBFileSynchronizer : NSObject
 
-- (void) reset;
 - (void) sync;
 - (void) setHasLocalChange:(BOOL)hasLocalChange;
 

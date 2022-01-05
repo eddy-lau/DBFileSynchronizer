@@ -14,7 +14,7 @@ class MainViewController : UIViewController {
     @IBOutlet weak var textView:UITextView!
     @IBOutlet weak var syncButton:UIBarButtonItem!
     
-    let synchronizer = DBSynchronizer(syncable: SyncableText())!
+    let synchronizer = DBSynchronizer(syncable: SyncableText())
     var syncable:SyncableText {
         synchronizer.syncable as! SyncableText
     }

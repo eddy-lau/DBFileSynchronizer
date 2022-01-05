@@ -16,18 +16,18 @@ class SyncableText : NSObject, DBSyncable {
         return content.count > 0
     }
     
-    func dataRepresentation() -> Data! {
+    func dataRepresentation() -> Data? {
         return content.data(using: .utf8)
     }
     
-    func replace(by data: Data!) {
+    func replace(by data: Data) {
         guard let newText = String(data: data, encoding: .utf8) else {
             return
         }
         content = newText
     }
     
-    func merge(with Data: Data!) -> Bool {
+    func merge(with Data: Data) -> Bool {
         guard let newText = String(data: Data, encoding: .utf8) else {
             return false
         }
@@ -36,7 +36,7 @@ class SyncableText : NSObject, DBSyncable {
         return true
     }
     
-    func fileName() -> String! {
+    func fileName() -> String {
         return "Text.txt"
     }
 }

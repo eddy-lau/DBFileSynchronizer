@@ -447,9 +447,6 @@ typedef enum {
 
 #pragma mark public methods
 
-- (void) reset {
-}
-
 - (void) sync {
     
     if (self.restClient == nil) {

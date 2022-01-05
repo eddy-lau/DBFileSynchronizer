@@ -130,14 +130,25 @@ NSString *DBSynchronizerDidFailNotification = @"DBSynchronizerDidFailNotificatio
 
 - (void) fileSynchronizer:(DBFileSynchronizer *)controller mergeRemoteFileContentAtPath:(NSString *)path {
     
-    NSData *data = [NSData dataWithContentsOfFile:path];
+    NSError *error = nil;
+    NSData *data = [NSData dataWithContentsOfFile:path options:0 error:&error];
+    if (error || data == nil) {
+        NSLog(@"Error reading %@: %@", path, error);
+        return;
+    }
+
     self.hasLocalChange = [self.syncable mergeWithData:data];
-    
 }
 
 - (void) fileSynchronizer:(DBFileSynchronizer *)controller didDownloadFileAtPath:(NSString *)path {
     
-    NSData *data = [NSData dataWithContentsOfFile:path];
+    NSError *error = nil;
+    NSData *data = [NSData dataWithContentsOfFile:path options:0 error:&error];
+    if (error || data == nil) {
+        NSLog(@"Error reading %@: %@", path, error);
+        return;
+    }
+    
     [self.syncable replaceByData:data];
     
     NSDictionary *userInfo = @{@"syncable":self.syncable};
@@ -160,7 +171,6 @@ NSString *DBSynchronizerDidFailNotification = @"DBSynchronizerDidFailNotificatio
 #pragma mark public methods
 
 - (void) reset {
-    [self.fileSynchronizer reset];
 }
 
 - (void) sync {

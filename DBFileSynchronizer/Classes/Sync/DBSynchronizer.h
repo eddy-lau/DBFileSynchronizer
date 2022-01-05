@@ -11,16 +11,15 @@
 
 @interface DBSynchronizer : NSObject
 
-- (instancetype) initWithSyncable:(id<DBSyncable>)syncable;
-- (void) reset;
+- (instancetype _Nonnull) initWithSyncable:(id<DBSyncable> _Nonnull)syncable;
 - (void) sync;
 - (void) setHasLocalChange:(BOOL)hasLocalChange;
 
-@property (nonatomic,retain) id<DBSyncable> syncable;
-@property (nonatomic,readonly) NSDate *lastModifiedDate;
+@property (nonatomic,retain) id<DBSyncable> _Nullable syncable;
+@property (nonatomic,readonly) NSDate * _Nullable lastModifiedDate;
 
 @end
 
-extern NSString *DBSynchronizerDidDownloadSyncableNotification;
-extern NSString *DBSynchronizerDidUploadSyncableNotification;
-extern NSString *DBSynchronizerDidFailNotification;
+extern NSString * _Nonnull DBSynchronizerDidDownloadSyncableNotification;
+extern NSString * _Nonnull DBSynchronizerDidUploadSyncableNotification;
+extern NSString * _Nonnull DBSynchronizerDidFailNotification;
