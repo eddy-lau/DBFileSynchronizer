@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import DBFileSynchronizer
 
 class SyncableText : NSObject, DBSyncable {
     

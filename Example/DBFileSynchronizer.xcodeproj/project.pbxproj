@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2541CEA652623C4598625DDB /* Pods_DBFileSynchronizer_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB780BB750353640869D887C /* Pods_DBFileSynchronizer_Example.framework */; };
 		2C94B34D278518A0005F129F /* SyncableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C94B34C278518A0005F129F /* SyncableText.swift */; };
 		2CEDCE0A278427C300118744 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2CEDCE09278427C300118744 /* LaunchScreen.storyboard */; };
 		2CEDCE0C27842AFF00118744 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CEDCE0B27842AFF00118744 /* MainViewController.swift */; };
@@ -22,9 +23,8 @@
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
-		7EE50885EC1966E1A4A1DA7A /* libPods-DBFileSynchronizer_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B26141879E9A0D4B84402E17 /* libPods-DBFileSynchronizer_Tests.a */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
-		88CC09DC05277C70A596A2AD /* libPods-DBFileSynchronizer_Example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 503B7598D60AA457B524D428 /* libPods-DBFileSynchronizer_Example.a */; };
+		A9146AFC5F81E5371CF6ABD4 /* Pods_DBFileSynchronizer_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C43A303BC69A7D5E6F9FDD0 /* Pods_DBFileSynchronizer_Tests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,12 +38,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2C43A303BC69A7D5E6F9FDD0 /* Pods_DBFileSynchronizer_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DBFileSynchronizer_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C94B34C278518A0005F129F /* SyncableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncableText.swift; sourceTree = "<group>"; };
 		2CEDCE09278427C300118744 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2CEDCE0B27842AFF00118744 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
-		2CEDCE0D27842C4B00118744 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 		2DE7E9DDD733BF220FEDAF45 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		503B7598D60AA457B524D428 /* libPods-DBFileSynchronizer_Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DBFileSynchronizer_Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58A195388D20070C39A /* DBFileSynchronizer_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DBFileSynchronizer_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -66,9 +65,9 @@
 		7A7F29D4B92B36F0A91C24B1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		A093BF86E6BA65B8909351E7 /* DBFileSynchronizer.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = DBFileSynchronizer.podspec; path = ../DBFileSynchronizer.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		B26141879E9A0D4B84402E17 /* libPods-DBFileSynchronizer_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DBFileSynchronizer_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4C8A5AD23FF680F5E0108F3 /* Pods-DBFileSynchronizer_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBFileSynchronizer_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DBFileSynchronizer_Tests/Pods-DBFileSynchronizer_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		EACE3FD5573136D5A90AB4EF /* Pods-DBFileSynchronizer_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBFileSynchronizer_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-DBFileSynchronizer_Example/Pods-DBFileSynchronizer_Example.release.xcconfig"; sourceTree = "<group>"; };
+		EB780BB750353640869D887C /* Pods_DBFileSynchronizer_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DBFileSynchronizer_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,7 +78,7 @@
 				6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */,
 				6003F592195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F58E195388D20070C39A /* Foundation.framework in Frameworks */,
-				88CC09DC05277C70A596A2AD /* libPods-DBFileSynchronizer_Example.a in Frameworks */,
+				2541CEA652623C4598625DDB /* Pods_DBFileSynchronizer_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,7 +89,7 @@
 				6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */,
 				6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */,
-				7EE50885EC1966E1A4A1DA7A /* libPods-DBFileSynchronizer_Tests.a in Frameworks */,
+				A9146AFC5F81E5371CF6ABD4 /* Pods_DBFileSynchronizer_Tests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,8 +124,8 @@
 				6003F58F195388D20070C39A /* CoreGraphics.framework */,
 				6003F591195388D20070C39A /* UIKit.framework */,
 				6003F5AF195388D20070C39A /* XCTest.framework */,
-				503B7598D60AA457B524D428 /* libPods-DBFileSynchronizer_Example.a */,
-				B26141879E9A0D4B84402E17 /* libPods-DBFileSynchronizer_Tests.a */,
+				EB780BB750353640869D887C /* Pods_DBFileSynchronizer_Example.framework */,
+				2C43A303BC69A7D5E6F9FDD0 /* Pods_DBFileSynchronizer_Tests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -139,7 +138,6 @@
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				2CEDCE0B27842AFF00118744 /* MainViewController.swift */,
 				2C94B34C278518A0005F129F /* SyncableText.swift */,
-				2CEDCE0D27842C4B00118744 /* BridgingHeader.h */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				2CEDCE09278427C300118744 /* LaunchScreen.storyboard */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -210,6 +208,7 @@
 				6003F586195388D20070C39A /* Sources */,
 				6003F587195388D20070C39A /* Frameworks */,
 				6003F588195388D20070C39A /* Resources */,
+				97A7486E3CCF8232542260F5 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -334,6 +333,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		97A7486E3CCF8232542260F5 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DBFileSynchronizer_Example/Pods-DBFileSynchronizer_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/DBFileSynchronizer/DBFileSynchronizer.framework",
+				"${BUILT_PRODUCTS_DIR}/ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DBFileSynchronizer.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectiveDropboxOfficial.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DBFileSynchronizer_Example/Pods-DBFileSynchronizer_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -497,7 +516,6 @@
 			baseConfigurationReference = 6E31DC1DB5B4EB291025A8C0 /* Pods-DBFileSynchronizer_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -509,7 +527,6 @@
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = DBFileSynchronizer/BridgingHeader.h;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
@@ -521,7 +538,6 @@
 			baseConfigurationReference = EACE3FD5573136D5A90AB4EF /* Pods-DBFileSynchronizer_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -533,7 +549,6 @@
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = DBFileSynchronizer/BridgingHeader.h;
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;
 			};
