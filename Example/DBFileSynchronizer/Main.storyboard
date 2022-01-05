@@ -36,17 +36,51 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="cjj-Cq-2op">
-                                <rect key="frame" x="20" y="96" width="365" height="686"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="cjj-Cq-2op">
+                                <rect key="frame" x="20" y="88" width="374" height="250"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="250" id="pmh-dc-QBm"/>
+                                </constraints>
                                 <color key="textColor" systemColor="labelColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <connections>
+                                    <outlet property="delegate" destination="whP-gf-Uak" id="8PU-ia-4sg"/>
+                                </connections>
                             </textView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Input text above." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ucm-4F-uUY">
+                                <rect key="frame" x="20" y="359" width="374" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="WSh-UD-Vr4"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Press Sync button to save to Dropbox." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aAt-kS-3pR">
+                                <rect key="frame" x="20" y="388" width="374" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="0go-r0-grA"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemGray5Color"/>
+                        <constraints>
+                            <constraint firstItem="cjj-Cq-2op" firstAttribute="trailing" secondItem="TpU-gO-2f1" secondAttribute="trailingMargin" id="QVn-gC-Rzl"/>
+                            <constraint firstItem="aAt-kS-3pR" firstAttribute="top" secondItem="ucm-4F-uUY" secondAttribute="bottom" constant="8" symbolic="YES" id="RDo-dk-nGj"/>
+                            <constraint firstItem="ucm-4F-uUY" firstAttribute="trailing" secondItem="TpU-gO-2f1" secondAttribute="trailingMargin" id="Ryr-gm-NOy"/>
+                            <constraint firstItem="aAt-kS-3pR" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leadingMargin" id="YvE-8F-ZBj"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="aAt-kS-3pR" secondAttribute="trailing" id="b0n-E9-a1o"/>
+                            <constraint firstItem="cjj-Cq-2op" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leadingMargin" id="d6g-kg-35y"/>
+                            <constraint firstItem="ucm-4F-uUY" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leadingMargin" id="gjV-Dr-Dgb"/>
+                            <constraint firstItem="ucm-4F-uUY" firstAttribute="top" secondItem="cjj-Cq-2op" secondAttribute="bottom" constant="21" id="t2e-AA-6x1"/>
+                            <constraint firstItem="cjj-Cq-2op" firstAttribute="top" secondItem="uEw-UM-LJ8" secondAttribute="bottom" id="uxw-8k-2aa"/>
+                            <constraint firstItem="aAt-kS-3pR" firstAttribute="centerX" secondItem="ucm-4F-uUY" secondAttribute="centerX" id="ym5-Mn-Z7e"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="DBFileSynchronizer" id="I0z-8v-NPP">
                         <barButtonItem key="leftBarButtonItem" title="Setting" id="hpV-88-VxH">
@@ -54,11 +88,20 @@
                                 <action selector="didTapSetting" destination="whP-gf-Uak" id="pzQ-Np-2Mn"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Sync" id="AVd-4m-rbl">
+                            <connections>
+                                <action selector="didTapSync" destination="whP-gf-Uak" id="Bzx-SD-DFJ"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="syncButton" destination="AVd-4m-rbl" id="e5P-Wh-Af5"/>
+                        <outlet property="textView" destination="cjj-Cq-2op" id="Ngk-m7-BKi"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tc2-Qw-aMS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="328.98550724637681" y="450"/>
+            <point key="canvasLocation" x="327.536231884058" y="450"/>
         </scene>
     </scenes>
     <resources>
@@ -67,6 +110,9 @@
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGray5Color">
+            <color red="0.89803921568627454" green="0.89803921568627454" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

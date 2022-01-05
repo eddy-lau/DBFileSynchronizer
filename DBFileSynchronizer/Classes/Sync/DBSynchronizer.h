@@ -11,6 +11,7 @@
 
 @interface DBSynchronizer : NSObject
 
+- (instancetype) initWithSyncable:(id<DBSyncable>)syncable;
 - (void) reset;
 - (void) sync;
 - (void) setHasLocalChange:(BOOL)hasLocalChange;

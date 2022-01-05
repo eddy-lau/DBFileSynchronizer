@@ -41,8 +41,14 @@
     return [DBClientsManager authorizedClient] != nil;
 }
 
+//typedef void (^DBCleanupBlock)(void);
+
 - (void) reload {
-    
+    [self reloadWithCompletionBlock:NULL];
+}
+
+- (void) reloadWithCompletionBlock:(DBAccountInfoCellCompletionBlock)completionBlock {
+
     if (self.isLinked) {
 
         if (self.accountInfo == nil) {
@@ -50,11 +56,10 @@
             self.restClient = [DBClientsManager authorizedClient];
             [[self.restClient.usersRoutes getCurrentAccount]
                 setResponseBlock:^(DBUSERSFullAccount *account, DBNilObject * nilObject, DBRequestError * error) {
-                    
-                    if (account) {
-                        [self restClient:self.restClient loadedAccountInfo:account];
-                    } else {
-                        
+                
+                    [self restClient:self.restClient loadedAccountInfo:account error:error];
+                    if (completionBlock) {
+                        completionBlock(account != nil);
                     }
                     
                 }];
@@ -78,19 +83,29 @@
     
 }
 
-- (void)restClient:(DBUserClient *)client loadedAccountInfo:(DBUSERSAccount *)info {
+- (void)restClient:(DBUserClient *)client loadedAccountInfo:(DBUSERSAccount *)info error:(DBRequestError *) error{
     
     if (client == self.restClient) {
         
         DBUserClient *retainCycle = client;
         
-        self.accountInfo = info;
-        self.accessoryView = nil;
-        self.detailTextLabel.text = info.name.displayName;
+        if (error) {
+            
+            NSLog(@"Error: %@", error);
+            self.accountInfo = nil;
+            self.detailTextLabel.text = @"已登出"; //ZHLocalizedString(@"Unlinked", @"");
+            [DBClientsManager unlinkAndResetClients];
+            
+        } else if (info != nil) {
+            
+            self.accountInfo = info;
+            self.detailTextLabel.text = info.name.displayName;
+            
+        }
         
         self.restClient = nil;
+        self.accessoryView = nil;
         [self setNeedsLayout];
-        
         retainCycle = nil;
     }
     

@@ -27,7 +27,7 @@ typedef enum {
 
 @interface DBFileSynchronizer ()
 
-@property (nonatomic,retain) DBUserClient *restClient;
+@property (nonatomic,readonly) DBUserClient *restClient;
 @property (nonatomic,copy)   NSString *accountId;
 @property (nonatomic)        BOOL downloadForMerge;
 
@@ -37,7 +37,10 @@ typedef enum {
 @implementation DBFileSynchronizer
 
 - (void) dealloc {
-    self.restClient = nil;
+}
+
+- (DBUserClient *) restClient {
+    return [DBClientsManager authorizedClient];
 }
 
 - (NSString *) userId {
@@ -136,6 +139,11 @@ typedef enum {
     NSString *destFileName = [self destFileNameFromDataSource];
     NSString *destFoldername = [self destFolderFromDataSource];
     
+    if (![[NSFileManager defaultManager] fileExistsAtPath:url.path]) {
+        NSLog(@"Local file not found, cannot upload.");
+        return;
+    }
+    
     if (url && destFoldername && destFileName) {
         
         // v1
@@ -152,7 +160,7 @@ typedef enum {
         
         NSString *destPath = [destFoldername stringByAppendingPathComponent:destFileName];
         
-        [[self.restClient.filesRoutes uploadUrl:destPath mode:writeMode autorename:@NO clientModified:nil mute:@NO propertyGroups:nil strictConflict:@NO inputUrl:url.absoluteString]
+        [[self.restClient.filesRoutes uploadUrl:destPath mode:writeMode autorename:@NO clientModified:nil mute:@NO propertyGroups:nil strictConflict:@NO inputUrl:url.path]
             setResponseBlock:^(DBFILESFileMetadata *fileMetadata, DBFILESUploadError *routeError, DBRequestError *error) {
                 
                 if (fileMetadata) {
@@ -440,18 +448,12 @@ typedef enum {
 #pragma mark public methods
 
 - (void) reset {
-    self.restClient = nil;
 }
 
 - (void) sync {
     
-    DBUserClient *authorizedClient = [DBClientsManager authorizedClient];
-    if (authorizedClient == nil) {
-        return;
-    }
-    
     if (self.restClient == nil) {
-        self.restClient = authorizedClient;
+        return;
     }
     
     // v2

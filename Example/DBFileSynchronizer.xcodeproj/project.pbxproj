@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C94B34D278518A0005F129F /* SyncableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C94B34C278518A0005F129F /* SyncableText.swift */; };
 		2CEDCE0A278427C300118744 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2CEDCE09278427C300118744 /* LaunchScreen.storyboard */; };
 		2CEDCE0C27842AFF00118744 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CEDCE0B27842AFF00118744 /* MainViewController.swift */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2C94B34C278518A0005F129F /* SyncableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncableText.swift; sourceTree = "<group>"; };
 		2CEDCE09278427C300118744 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2CEDCE0B27842AFF00118744 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		2CEDCE0D27842C4B00118744 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
@@ -63,7 +65,7 @@
 		6E31DC1DB5B4EB291025A8C0 /* Pods-DBFileSynchronizer_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBFileSynchronizer_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DBFileSynchronizer_Example/Pods-DBFileSynchronizer_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		7A7F29D4B92B36F0A91C24B1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		A093BF86E6BA65B8909351E7 /* DBFileSynchronizer.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = DBFileSynchronizer.podspec; path = ../DBFileSynchronizer.podspec; sourceTree = "<group>"; };
+		A093BF86E6BA65B8909351E7 /* DBFileSynchronizer.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = DBFileSynchronizer.podspec; path = ../DBFileSynchronizer.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		B26141879E9A0D4B84402E17 /* libPods-DBFileSynchronizer_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DBFileSynchronizer_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4C8A5AD23FF680F5E0108F3 /* Pods-DBFileSynchronizer_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBFileSynchronizer_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DBFileSynchronizer_Tests/Pods-DBFileSynchronizer_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		EACE3FD5573136D5A90AB4EF /* Pods-DBFileSynchronizer_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DBFileSynchronizer_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-DBFileSynchronizer_Example/Pods-DBFileSynchronizer_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				6003F59D195388D20070C39A /* DBAppDelegate.m */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				2CEDCE0B27842AFF00118744 /* MainViewController.swift */,
+				2C94B34C278518A0005F129F /* SyncableText.swift */,
 				2CEDCE0D27842C4B00118744 /* BridgingHeader.h */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				2CEDCE09278427C300118744 /* LaunchScreen.storyboard */,
@@ -343,6 +346,7 @@
 				6003F59E195388D20070C39A /* DBAppDelegate.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				2CEDCE0C27842AFF00118744 /* MainViewController.swift in Sources */,
+				2C94B34D278518A0005F129F /* SyncableText.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

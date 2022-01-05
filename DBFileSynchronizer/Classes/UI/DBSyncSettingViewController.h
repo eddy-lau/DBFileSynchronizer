@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 
 @class DBSyncSettingViewController;
 @protocol DBSyncSettingViewControllerDelegate <NSObject>
@@ -16,6 +17,7 @@
 
 @optional
 - (NSString *) localizedStringForSyncSettingViewController:(DBSyncSettingViewController *)controller ofText:(NSString *)text;
+- (void) syncSettingViewControllerDidLogin:(DBSyncSettingViewController *)controller;
 - (void) syncSettingViewControllerDidLogout:(DBSyncSettingViewController *)controller;
 
 @end
@@ -25,6 +27,6 @@
 @property (nonatomic,readonly) UITableView *tableView;
 @property (nonatomic,assign) id<DBSyncSettingViewControllerDelegate>   delegate;
 
-+ (void) refresh;
++ (void) refreshWithAuthResult:(DBOAuthResult *)authResult;
 
 @end

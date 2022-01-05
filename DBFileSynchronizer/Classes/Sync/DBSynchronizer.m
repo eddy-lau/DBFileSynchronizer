@@ -25,7 +25,18 @@ NSString *DBSynchronizerDidFailNotification = @"DBSynchronizerDidFailNotificatio
 
 @implementation DBSynchronizer
 
-- (id) init {
+- (instancetype) initWithSyncable:(id<DBSyncable>)syncable {
+    self = [super init];
+    if (self) {
+        self.syncable = syncable;
+        self.fileSynchronizer = [[DBFileSynchronizer alloc] init];
+        self.fileSynchronizer.dataSource = self;
+        self.fileSynchronizer.delegate = self;
+    }
+    return self;
+}
+
+- (instancetype) init {
     
     self = [super init];
     if (self) {

@@ -12,7 +12,7 @@
 
 #define L(s) ([self localizedText:(s)])
 
-NSString *DBAccountDidLinkNotification = @"DropboxAccountDidLinkNotification";
+NSString *DBAccountDidAuthNotification = @"DropboxAccountDidAuthNotification";
 
 
 enum {
@@ -24,7 +24,7 @@ enum {
 <
     UITableViewDataSource,
     UITableViewDelegate,
-    UIAlertViewDelegate
+    DBLoadingStatusDelegate
 >
 
 @property (nonatomic,assign) UITableView *tableView;
@@ -70,8 +70,8 @@ enum {
     // Do any additional setup after loading the view.
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(dropboxAccountDidLinkNotification:)
-                                                 name:DBAccountDidLinkNotification
+                                             selector:@selector(dropboxAccountDidAuthNotification:)
+                                                 name:DBAccountDidAuthNotification
                                                object:nil];
 }
 
@@ -183,7 +183,19 @@ enum {
                 cell = [[DBAccountInfoCell alloc] initWithReuseIdentifier:cellId];
             }
             
-            [cell reload];
+            BOOL wasLinked = [self isLinked];
+            [cell reloadWithCompletionBlock:^(BOOL linked) {
+                if (!wasLinked && linked) {
+                    if ([self.delegate respondsToSelector:@selector(syncSettingViewControllerDidLogin:)]) {
+                        [self.delegate syncSettingViewControllerDidLogin:self];
+                    }
+                } else if (wasLinked && !linked) {
+                    if ([self.delegate respondsToSelector:@selector(syncSettingViewControllerDidLogout:)]) {
+                        [self.delegate syncSettingViewControllerDidLogout:self];
+                    }
+                }
+                [self.tableView reloadData];
+            }];
             
             return cell;
             
@@ -283,10 +295,12 @@ enum {
                 //[[DBSession sharedSession] linkFromController:self];
                 
                 // v2
-                [DBClientsManager authorizeFromController:[UIApplication sharedApplication]
-                                                    controller:self
-                                                  openURL:^(NSURL *url){ [[UIApplication sharedApplication] openURL:url]; }];
-                
+                [DBClientsManager authorizeFromControllerV2:[UIApplication sharedApplication]
+                                                 controller:self
+                                      loadingStatusDelegate:self
+                                                    openURL:^(NSURL * _Nonnull url) {
+                    [[UIApplication sharedApplication] openURL:url];
+                } scopeRequest:nil];
                 
             } else {
                 
@@ -328,14 +342,53 @@ enum {
 
 #pragma mark DropboxAccount notification
 
-+ (void) refresh {
++ (void) refreshWithAuthResult:(DBOAuthResult *)authResult {
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:DBAccountDidLinkNotification object:nil];
+    if (authResult == nil) {
+        return;
+    }
+    
+    NSDictionary *userInfo = @{@"authResult":authResult};
+    [[NSNotificationCenter defaultCenter] postNotificationName:DBAccountDidAuthNotification object:nil userInfo:userInfo];
 
+}
+
+- (void) dropboxAccountDidAuthNotification:(NSNotification *)notification {
+    
+    DBOAuthResult *authResult = notification.userInfo[@"authResult"];
+    [self.tableView reloadData];
+    
+    if ([authResult isSuccess]) {
+        
+        if ([self.delegate respondsToSelector:@selector(syncSettingViewControllerDidLogin:)]) {
+            [self.delegate syncSettingViewControllerDidLogin:self];
+        }
+
+    } else if ([authResult isCancel]) {
+        
+        NSLog(@"Authorization flow was manually canceled by user!");
+        
+    } else if ([authResult isError]) {
+        
+        NSLog(@"Error: %@", authResult.nsError);
+        
+    }
+    
 }
 
 - (void) dropboxAccountDidLinkNotification:(NSNotification *)notification {
     [self.tableView reloadData];
+    if ([self.delegate respondsToSelector:@selector(syncSettingViewControllerDidLogin:)]) {
+        [self.delegate syncSettingViewControllerDidLogin:self];
+    }
+}
+
+- (void)dismissLoading {
+    
+}
+
+- (void)showLoading {
+    
 }
 
 @end

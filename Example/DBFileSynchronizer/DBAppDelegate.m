@@ -15,7 +15,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    [DBClientsManager setupWithAppKey:@"jjhuwk15reuo8e2"];
+    [DBClientsManager setupWithAppKey:@"l269l58a1s4fck5"];
 
     return YES;
 }
@@ -26,25 +26,8 @@
     
     return [DBClientsManager handleRedirectURL:url completion:^(DBOAuthResult * _Nullable authResult) {
         
-        if (authResult != nil) {
+        [DBSyncSettingViewController refreshWithAuthResult:authResult];
             
-            if ([authResult isSuccess]) {
-                
-    //            [[BackupManager instance] sync];
-                [DBSyncSettingViewController refresh];
-                
-            } else if ([authResult isCancel]) {
-                
-                NSLog(@"Authorization flow was manually canceled by user!");
-                
-            } else if ([authResult isError]) {
-                
-                NSLog(@"Error: %@", authResult);
-                
-            }
-            
-        }
-        
     }];
 }
 

@@ -8,9 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+typedef void (^DBAccountInfoCellCompletionBlock)(BOOL);
+
 @interface DBAccountInfoCell : UITableViewCell
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier;
 - (void) reload;
+- (void) reloadWithCompletionBlock:(DBAccountInfoCellCompletionBlock)completion;
 
 @end
