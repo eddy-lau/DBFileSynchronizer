@@ -22,11 +22,17 @@
 
 @end
 
+
+typedef void (^DBRefreshTokensCompletion)(void);
+
 @interface DBSyncSettingViewController : UIViewController
 
 @property (nonatomic,readonly) UITableView * _Nullable tableView;
 @property (nonatomic,assign) id<DBSyncSettingViewControllerDelegate> _Nullable delegate;
 
 + (void) refreshWithAuthResult:(DBOAuthResult * _Nullable)authResult;
++ (void) refreshAllAccessTokens:(DBRefreshTokensCompletion _Nullable)completion;
++ (void) fixKeychainBug;
+
 
 @end

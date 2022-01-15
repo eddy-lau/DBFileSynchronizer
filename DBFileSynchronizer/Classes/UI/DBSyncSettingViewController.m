@@ -9,6 +9,7 @@
 #import "DBSyncSettingViewController.h"
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 #import "DBAccountInfoCell.h"
+#import "DBLegacyKeychain.h"
 
 #define L(s) ([self localizedText:(s)])
 
@@ -73,6 +74,78 @@ enum {
                                              selector:@selector(dropboxAccountDidAuthNotification:)
                                                  name:DBAccountDidAuthNotification
                                                object:nil];
+    
+    [DBSyncSettingViewController refreshAllAccessTokens:nil];
+}
+
++ (void) refreshNextAccessToken:(NSMutableArray<DBAccessToken *> *)tokens completion:(DBRefreshTokensCompletion)completion {
+    
+    if (tokens.count == 0) {
+        if (completion) {
+            completion();
+        }
+        return;
+    }
+    
+    DBAccessToken *token = [tokens objectAtIndex:0];
+    [tokens removeObjectAtIndex:0];
+    
+    DBOAuthManager *authManager = DBOAuthManager.sharedOAuthManager;
+    [authManager refreshAccessToken:token scopes:@[] queue:nil completion:^(DBOAuthResult * _Nullable authResult) {
+        if (authResult == nil) {
+            [self refreshNextAccessToken:tokens completion:completion];
+            return;
+        }
+        
+        if(authResult.isError) {
+            
+            NSLog(@"Error refreshing Token: %@", authResult.nsError);
+            
+        } else if (authResult.isSuccess) {
+
+            NSTimeInterval timeInterval = token.tokenExpirationTimestamp;
+            NSDate *lastUpdate = [[NSDate alloc] initWithTimeIntervalSince1970:timeInterval];
+            NSLog(@"Successfully refreshed Token: %@ -> %@", token.accessToken, lastUpdate);
+            
+        }
+
+        [self refreshNextAccessToken:tokens completion:completion];
+    }];
+
+    
+}
+
++ (void) refreshAllAccessTokens:(DBRefreshTokensCompletion _Nullable)completion {
+
+    DBOAuthManager *authManager = DBOAuthManager.sharedOAuthManager;
+    NSDictionary<NSString *, DBAccessToken *> *tokensDict = [authManager retrieveAllAccessTokens];
+    
+    NSMutableArray<DBAccessToken *> *tokens = [NSMutableArray array];
+    
+    for (NSString *key in tokensDict) {
+        [tokens addObject:tokensDict[key]];
+    }
+    
+    [self refreshNextAccessToken:tokens completion:completion];
+    
+}
+
++ (void) fixKeychainBug {
+    
+    DBUserClient *client = [DBClientsManager authorizedClient];
+    if (client == nil) {
+        NSArray<NSString *> *allKeys = [DBLegacyKeychain getAll];
+        if (allKeys.count > 0) {
+            NSLog(@"Found legacy keys in keychain!");
+            NSLog(@"This causes the problem that the new keys can't be stored.");
+            NSLog(@"Removing the legacy keys now...");
+            for (NSString *key in allKeys) {
+                [DBLegacyKeychain delete:key];
+            }
+        }
+        return;
+    }
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -264,17 +337,13 @@ enum {
     }
 }
 
+static NSInteger clickedCount = 0;
+
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (indexPath.section == SECTION_DROPBOX_ACCOUNT) {
         
-        if (indexPath.row == 1) {
-            
-            return indexPath;
-            
-        } else {
-            return nil;
-        }
+        return indexPath;
         
     } else {
         
@@ -287,7 +356,21 @@ enum {
 - (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (indexPath.section == SECTION_DROPBOX_ACCOUNT) {
-    
+        
+        if (indexPath.row == 0) {
+            
+            clickedCount++;
+            if (clickedCount > 5) {
+                clickedCount = 0;
+                
+                NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"DebugViewController" bundle:bundle];
+                UIViewController *vc = [storyboard instantiateInitialViewController];
+                [self presentViewController:vc animated:YES completion:nil];
+                
+            }
+            
+        } else
         if (indexPath.row == 1) {
             if (!self.isLinked) {
                 

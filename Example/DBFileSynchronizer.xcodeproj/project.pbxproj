@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2541CEA652623C4598625DDB /* Pods_DBFileSynchronizer_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB780BB750353640869D887C /* Pods_DBFileSynchronizer_Example.framework */; };
+		2C91D3B127917D5E0074FB37 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C91D3B027917D5E0074FB37 /* AppDelegate.swift */; };
 		2C94B34D278518A0005F129F /* SyncableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C94B34C278518A0005F129F /* SyncableText.swift */; };
 		2CEDCE0A278427C300118744 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2CEDCE09278427C300118744 /* LaunchScreen.storyboard */; };
 		2CEDCE0C27842AFF00118744 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CEDCE0B27842AFF00118744 /* MainViewController.swift */; };
@@ -16,7 +17,6 @@
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F598195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F596195388D20070C39A /* InfoPlist.strings */; };
 		6003F59A195388D20070C39A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F599195388D20070C39A /* main.m */; };
-		6003F59E195388D20070C39A /* DBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F59D195388D20070C39A /* DBAppDelegate.m */; };
 		6003F5A9195388D20070C39A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5A8195388D20070C39A /* Images.xcassets */; };
 		6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F5AF195388D20070C39A /* XCTest.framework */; };
 		6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
@@ -39,6 +39,7 @@
 
 /* Begin PBXFileReference section */
 		2C43A303BC69A7D5E6F9FDD0 /* Pods_DBFileSynchronizer_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DBFileSynchronizer_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C91D3B027917D5E0074FB37 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2C94B34C278518A0005F129F /* SyncableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncableText.swift; sourceTree = "<group>"; };
 		2CEDCE09278427C300118744 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2CEDCE0B27842AFF00118744 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -51,8 +52,6 @@
 		6003F597195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6003F599195388D20070C39A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		6003F59B195388D20070C39A /* DBFileSynchronizer-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DBFileSynchronizer-Prefix.pch"; sourceTree = "<group>"; };
-		6003F59C195388D20070C39A /* DBAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBAppDelegate.h; sourceTree = "<group>"; };
-		6003F59D195388D20070C39A /* DBAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DBAppDelegate.m; sourceTree = "<group>"; };
 		6003F5A8195388D20070C39A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		6003F5AE195388D20070C39A /* DBFileSynchronizer_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DBFileSynchronizer_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F5AF195388D20070C39A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -133,8 +132,7 @@
 		6003F593195388D20070C39A /* Example for DBFileSynchronizer */ = {
 			isa = PBXGroup;
 			children = (
-				6003F59C195388D20070C39A /* DBAppDelegate.h */,
-				6003F59D195388D20070C39A /* DBAppDelegate.m */,
+				2C91D3B027917D5E0074FB37 /* AppDelegate.swift */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				2CEDCE0B27842AFF00118744 /* MainViewController.swift */,
 				2C94B34C278518A0005F129F /* SyncableText.swift */,
@@ -249,6 +247,7 @@
 				ORGANIZATIONNAME = "Eddie Lau";
 				TargetAttributes = {
 					6003F589195388D20070C39A = {
+						DevelopmentTeam = NRZK3EVP4Z;
 						LastSwiftMigration = 1320;
 					};
 					6003F5AD195388D20070C39A = {
@@ -362,9 +361,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6003F59E195388D20070C39A /* DBAppDelegate.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				2CEDCE0C27842AFF00118744 /* MainViewController.swift in Sources */,
+				2C91D3B127917D5E0074FB37 /* AppDelegate.swift in Sources */,
 				2C94B34D278518A0005F129F /* SyncableText.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -519,6 +518,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				DEVELOPMENT_TEAM = NRZK3EVP4Z;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DBFileSynchronizer/DBFileSynchronizer-Prefix.pch";
 				INFOPLIST_FILE = "DBFileSynchronizer/DBFileSynchronizer-Info.plist";
@@ -541,6 +541,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				DEVELOPMENT_TEAM = NRZK3EVP4Z;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DBFileSynchronizer/DBFileSynchronizer-Prefix.pch";
 				INFOPLIST_FILE = "DBFileSynchronizer/DBFileSynchronizer-Info.plist";

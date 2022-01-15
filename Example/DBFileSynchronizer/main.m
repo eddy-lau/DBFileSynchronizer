@@ -7,11 +7,11 @@
 //
 
 @import UIKit;
-#import "DBAppDelegate.h"
+#import "DBFileSynchronizer_Example-Swift.h"
 
 int main(int argc, char * argv[])
 {
     @autoreleasepool {
-        return UIApplicationMain(argc, argv, nil, NSStringFromClass([DBAppDelegate class]));
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }
 }
