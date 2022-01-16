@@ -84,24 +84,34 @@ extension DBSyncManager {
             
     }
     
-    @objc public static func performFetch(completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    @objc public static func performFetch(completionHandler: ((UIBackgroundFetchResult) -> Void)? = nil) {
         
         // iOS 12
         DBSyncSettingViewController.refreshAllAccessTokens {
             lastRefreshTime = Date()
-            completionHandler(.newData)
+            completionHandler?(.newData)
         }
         
+    }
+    
+    @available(iOS 13.0, *)
+    static var appRefreshTaskRequest:BGTaskRequest {
+        BGAppRefreshTaskRequest(identifier: .dropboxTokenRefreshTask)
+    }
+    
+    @available(iOS 13.0, *)
+    static var processingTaskRequest:BGTaskRequest {
+        let request = BGProcessingTaskRequest(identifier: .dropboxTokenRefreshTask)
+        request.requiresNetworkConnectivity = true
+        return request
     }
 
     @available(iOS 13.0, *)
     @objc public static func scheduleAppRefresh(timeInterval:TimeInterval = 60 * 60) {
-        
-        let request = BGAppRefreshTaskRequest(identifier: .dropboxTokenRefreshTask)
-        //let request = BGProcessingTaskRequest(identifier: .dropboxTokenRefreshTask)
+   
+        let request = appRefreshTaskRequest
         request.earliestBeginDate = Date(timeIntervalSinceNow: timeInterval)
-        //request.requiresNetworkConnectivity = true
-
+        
         do {
             try BGTaskScheduler.shared.submit(request)
 
@@ -118,6 +128,7 @@ extension DBSyncManager {
     }
 }
 
+// MARK: - Extensions
 extension String {
     static let dropboxTokenRefreshTask = "DBFileSynchronizerTokenRefreshTaskId"
     static let lastRefreshTimeKey = "DBFileSynchronizer.lastRefreshTimeDefaultsKey"

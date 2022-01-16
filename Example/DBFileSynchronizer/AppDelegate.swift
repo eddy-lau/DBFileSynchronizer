@@ -33,6 +33,10 @@ import DBFileSynchronizer
         DBSyncManager.performFetch(completionHandler: completionHandler)
     }
     
+    public func applicationDidBecomeActive(_ application: UIApplication) {
+        DBSyncManager.performFetch()
+    }
+    
     public func applicationDidEnterBackground(_ application: UIApplication) {
         if #available(iOS 13.0, *) {
             DBSyncManager.scheduleAppRefresh()
