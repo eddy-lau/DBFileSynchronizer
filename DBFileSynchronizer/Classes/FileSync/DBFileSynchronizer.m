@@ -9,6 +9,7 @@
 #import "DBFileSynchronizer.h"
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 #import "DBLocalMetadata.h"
+#import "DBError.h"
 
 @interface DBRequestError (extension)
 
@@ -170,12 +171,7 @@ typedef enum {
                     
                 } else {
                     
-                    NSString *message =
-                        [NSString stringWithFormat:@"Couldn't upload file: %@", destPath];
-                    NSError *error =
-                        [NSError errorWithDomain:@"DBFileSynchronizer"
-                                            code:-1
-                                        userInfo:@{NSLocalizedDescriptionKey:message}];
+                    NSError *error = [NSError uploadFileError:destPath];
                     [self restClient:self.restClient uploadFileFailedWithError:error];
                     
                 }
@@ -217,14 +213,7 @@ typedef enum {
                 
             } else {
                 
-                NSString *message =
-                    [NSString stringWithFormat:@"Couldn't load file: %@", destPathOrRev];
-                
-                NSError *error =
-                    [NSError errorWithDomain:@"DBFileSynchronizer"
-                                        code:-1
-                                    userInfo:@{NSLocalizedDescriptionKey:message}];
-                
+                NSError *error = [NSError downloadFileError:destPathOrRev];
                 [self restClient:self.restClient loadFileFailedWithError:error];
                 
             }
@@ -448,10 +437,18 @@ typedef enum {
 #pragma mark public methods
 
 - (void) sync {
-    
+    [self sync:nil];
+}
+
+- (void) sync:(DBSyncCompletionHandler _Nullable)completionHandler {
+
     if (self.restClient == nil) {
         if ([self localMetadata].hasLocalChange) {
             NSLog(@"Warning: couldn't sync local change");
+            NSError *error = [NSError notLoggedInError];
+            if (completionHandler) {
+                completionHandler(error);
+            }
         }
         return;
     }
