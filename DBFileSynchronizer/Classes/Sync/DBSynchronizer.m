@@ -9,9 +9,10 @@
 #import "DBSynchronizer.h"
 #import "DBFileSynchronizer.h"
 
-NSString *DBSynchronizerDidDownloadSyncableNotification = @"DBSynchronizerDidDownloadSyncableNotification";
-NSString *DBSynchronizerDidUploadSyncableNotification = @"DBSynchronizerDidUploadSyncableNotification";
-NSString *DBSynchronizerDidFailNotification = @"DBSynchronizerDidFailNotification";
+NSNotificationName DBSyncableDidDownloadNotification = @"DBSyncableDidDownloadNotification";
+NSNotificationName DBSyncableDidUploadNotification = @"DBSyncableDidUploadNotification";
+NSNotificationName DBSyncableDidFailNotification = @"DBSyncableDidFailNotification";
+
 
 @interface DBSynchronizer ()
 <
@@ -152,19 +153,19 @@ NSString *DBSynchronizerDidFailNotification = @"DBSynchronizerDidFailNotificatio
     [self.syncable replaceByData:data];
     
     NSDictionary *userInfo = @{@"syncable":self.syncable};
-    [[NSNotificationCenter defaultCenter] postNotificationName:DBSynchronizerDidDownloadSyncableNotification object:self userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:DBSyncableDidDownloadNotification object:self userInfo:userInfo];
 }
 
 - (void) fileSynchronizer:(DBFileSynchronizer *)controller didUploadFileAtPath:(NSString *)path {
     
     NSDictionary *userInfo = @{@"syncable":self.syncable};
-    [[NSNotificationCenter defaultCenter] postNotificationName:DBSynchronizerDidUploadSyncableNotification object:self userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:DBSyncableDidUploadNotification object:self userInfo:userInfo];
 }
 
 - (void) fileSynchronizer:(DBFileSynchronizer *)controller didFailWithError:(NSError *)error {
     
     NSDictionary *userInfo = @{@"syncable":self.syncable, @"error":error};
-    [[NSNotificationCenter defaultCenter] postNotificationName:DBSynchronizerDidFailNotification object:self userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:DBSyncableDidFailNotification object:self userInfo:userInfo];
     
 }
 

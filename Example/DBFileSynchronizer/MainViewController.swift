@@ -30,7 +30,7 @@ class MainViewController : UIViewController {
         NotificationCenter.default
             .addObserver(self,
                          selector: #selector(didDownloadSyncableNotification),
-                         name: NSNotification.Name.DBSynchronizerDidDownloadSyncable,
+                         name: NSNotification.Name.DBSyncableDidDownload,
                          object: nil)
         
         syncButton.isEnabled = isLinked

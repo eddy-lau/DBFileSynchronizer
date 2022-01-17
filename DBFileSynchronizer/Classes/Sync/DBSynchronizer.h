@@ -19,7 +19,3 @@
 @property (nonatomic,readonly) NSDate * _Nullable lastModifiedDate;
 
 @end
-
-extern NSString * _Nonnull DBSynchronizerDidDownloadSyncableNotification;
-extern NSString * _Nonnull DBSynchronizerDidUploadSyncableNotification;
-extern NSString * _Nonnull DBSynchronizerDidFailNotification;

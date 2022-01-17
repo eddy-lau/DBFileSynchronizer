@@ -450,6 +450,9 @@ typedef enum {
 - (void) sync {
     
     if (self.restClient == nil) {
+        if ([self localMetadata].hasLocalChange) {
+            NSLog(@"Warning: couldn't sync local change");
+        }
         return;
     }
     

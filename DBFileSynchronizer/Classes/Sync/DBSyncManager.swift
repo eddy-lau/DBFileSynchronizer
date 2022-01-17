@@ -86,7 +86,7 @@ import BackgroundTasks
     
 }
 
-extension NSNotification.Name {
+fileprivate extension NSNotification.Name {
     static let didAuth = Notification.Name("DropboxAccountDidAuthNotification")
 }
 
