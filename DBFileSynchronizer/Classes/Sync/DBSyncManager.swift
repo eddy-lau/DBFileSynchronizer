@@ -8,7 +8,9 @@
 import Foundation
 import BackgroundTasks
 
-public class DBSyncManager {
+@objc public class DBSyncManager : NSObject {
+    
+    static var synchronizers = [DBSynchronizer]()
     
     static var lastRefreshTime:Date? {
         get {
@@ -35,13 +37,60 @@ public class DBSyncManager {
         
     }
     
+    @objc public static func sync() {
+        synchronizers.forEach { $0.sync() }
+    }
+    
+    @objc public static func sync(id:NSNumber) throws {
+        synchronizers[id.intValue].sync()
+    }
+    
+    @objc public static var lastModifiedDate:Date? {
+        
+        synchronizers
+            .map { $0.lastModifiedDate }
+            .filter { $0 != nil }
+            .map { $0! }
+            .sorted { lhs, rhs in
+                lhs < rhs
+            }.last
+    }
+    
+    @objc public static func add(syncable:DBSyncable) throws -> NSNumber {
+        
+        guard nil == synchronizers.first(where: {
+            $0.syncable?.fileName() == syncable.fileName()
+        }) else {
+            throw NSError(domain: "DBFileSynchronizer", code: -1,
+                          userInfo: [NSLocalizedFailureReasonErrorKey:"Syncable with filename \(syncable.fileName()) already exists."])
+        }
+        
+        let synchronizer = DBSynchronizer()
+        synchronizer.syncable = syncable
+        synchronizers.append(synchronizer)
+        return NSNumber(value:synchronizers.count - 1)
+        
+    }
+    
+    @objc public static func markSyncableAsDirty(_ syncable:DBSyncable) {
+        
+        synchronizers.first {
+            $0.syncable?.fileName() == syncable.fileName()
+        }?.setHasLocalChange(true)
+        
+    }
+    
+    @objc public static func markAsDirty(_ syncableId:NSNumber) {
+        synchronizers[syncableId.intValue].setHasLocalChange(true)
+    }
+    
 }
 
 extension NSNotification.Name {
     static let didAuth = Notification.Name("DropboxAccountDidAuthNotification")
 }
 
-// MARK: -
+// MARK: Private methods -
 extension DBSyncManager {
     
     static func fixKeychainBug() {

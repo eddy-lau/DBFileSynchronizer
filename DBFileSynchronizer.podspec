@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'DBFileSynchronizer'
-  s.version          = '2.1.0'
+  s.version          = '3.0.0'
   s.summary          = 'Dropbox file sync utilities'
   s.description      = <<-DESC
 Objective-C utilities classes for syncing objects or files on Dropbox
@@ -11,7 +11,12 @@ Objective-C utilities classes for syncing objects or files on Dropbox
   s.source           = { :git => 'https://github.com/eddy-lau/DBFileSynchronizer.git', :tag => s.version.to_s }
   s.ios.deployment_target = '9.0'
   s.source_files = 'DBFileSynchronizer/Classes/**/*'
+  s.resource_bundles = {
+    "DBFileSynchronizer" => ['DBFileSynchronizer/Assets/**/*.{png,storyboard}']
+  }
   s.private_header_files = [
+    'DBFileSynchronizer/Classes/Sync/DBLegacyKeychtain.h',
+    'DBFileSynchronizer/Classes/Sync/DBSychronizer.h',
     'DBFileSynchronizer/Classes/FileSync/*.h',
     'DBFileSynchronizer/Classes/UI/DBAccountInfoCell.h'
   ]

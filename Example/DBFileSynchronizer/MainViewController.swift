@@ -15,18 +15,17 @@ class MainViewController : UIViewController {
     
     @IBOutlet weak var textView:UITextView!
     @IBOutlet weak var syncButton:UIBarButtonItem!
-    
-    let synchronizer = DBSynchronizer(syncable: SyncableText())
-    var syncable:SyncableText {
-        synchronizer.syncable as! SyncableText
-    }
+
+    let syncable = SyncableText()
     
     var isLinked:Bool {
         DBClientsManager.authorizedClient() != nil
     }
     
     override func viewDidLoad() {
-        synchronizer.sync()
+        
+        _ = try! DBSyncManager.add(syncable: syncable)
+        DBSyncManager.sync()
         
         NotificationCenter.default
             .addObserver(self,
@@ -44,7 +43,7 @@ extension MainViewController: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         syncable.content = textView.text
-        synchronizer.setHasLocalChange(true)
+        DBSyncManager.markSyncableAsDirty(syncable)
     }
     
     @objc func didDownloadSyncableNotification() {
@@ -67,7 +66,7 @@ extension MainViewController {
     }
     
     @IBAction func didTapSync() {
-        synchronizer.sync()
+        DBSyncManager.sync()
     }
     
     @objc func didTapClose() {
@@ -79,7 +78,7 @@ extension MainViewController {
 extension MainViewController : DBSyncSettingViewControllerDelegate {
     
     func lastSynchronizedTime(for controller: DBSyncSettingViewController) -> Date? {
-        return synchronizer.lastModifiedDate
+        return DBSyncManager.lastModifiedDate
     }
     
     func appName(for controller: DBSyncSettingViewController) -> String {
@@ -88,7 +87,7 @@ extension MainViewController : DBSyncSettingViewControllerDelegate {
     
     func syncSettingViewControllerDidLogin(_ controller: DBSyncSettingViewController) {
         syncButton.isEnabled = isLinked
-        synchronizer.sync()
+        DBSyncManager.sync()
     }
     
     func syncSettingViewControllerDidLogout(_ controller: DBSyncSettingViewController) {

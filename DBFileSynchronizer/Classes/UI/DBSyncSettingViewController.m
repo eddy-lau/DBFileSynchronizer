@@ -363,8 +363,10 @@ static NSInteger clickedCount = 0;
             if (clickedCount > 5) {
                 clickedCount = 0;
                 
-                NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"DebugViewController" bundle:bundle];
+                NSBundle *bundle = [NSBundle bundleForClass:[DBSyncSettingViewController class]];
+                NSURL *bundleURL = [bundle URLForResource:@"DBFileSynchronizer" withExtension:@"bundle"];
+                NSBundle *resourceBundle = [NSBundle bundleWithURL:bundleURL];
+                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"DebugViewController" bundle:resourceBundle];
                 UIViewController *vc = [storyboard instantiateInitialViewController];
                 [self presentViewController:vc animated:YES completion:nil];
                 
@@ -457,13 +459,6 @@ static NSInteger clickedCount = 0;
         
     }
     
-}
-
-- (void) dropboxAccountDidLinkNotification:(NSNotification *)notification {
-    [self.tableView reloadData];
-    if ([self.delegate respondsToSelector:@selector(syncSettingViewControllerDidLogin:)]) {
-        [self.delegate syncSettingViewControllerDidLogin:self];
-    }
 }
 
 - (void)dismissLoading {
