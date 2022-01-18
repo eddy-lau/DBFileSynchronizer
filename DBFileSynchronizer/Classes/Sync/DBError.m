@@ -44,7 +44,7 @@
 + (NSError *) errorWithException:(NSException *)exception {
     
     return
-        [NSError errorWithDomain:ErrDomain
+        [NSError errorWithDomain:@"Exception"
                             code:DBErrorCodeException
                         userInfo:@{NSLocalizedDescriptionKey:exception.description}];
 
@@ -58,7 +58,7 @@
     }
     
     return
-        [NSError errorWithDomain:@"DBFileSynchronizer"
+        [NSError errorWithDomain:dbError.tagName
                             code:dbError.statusCode.integerValue
                         userInfo:@{NSLocalizedDescriptionKey:message}];
     

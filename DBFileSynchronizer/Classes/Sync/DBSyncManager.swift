@@ -8,11 +8,13 @@
 import Foundation
 import BackgroundTasks
 
+
 @objc public class DBSyncManager : NSObject {
     
     static var synchronizers = [DBSynchronizer]()
     static var appName = "DBFileSynchronizer"
     static var settingDelegate:DBSyncSettingViewControllerDelegate = SettingDelegate()
+    static var textLocalizer:((String)->String)?
     
     static var lastRefreshTime:Date? {
         get {
@@ -23,7 +25,7 @@ import BackgroundTasks
         }
     }
     
-    static var syncError:Error? {
+    @objc public static var syncError:Error? {
         set {
             DBSyncSettingViewController.setSyncError(newValue)
         }
@@ -32,9 +34,14 @@ import BackgroundTasks
         }
     }
     
-    @objc public static func setup() {
+    @objc public static func setup(appName:String) {
+        self.appName = appName
         fixKeychainBug()
         setupBackgroundTask()
+    }
+    
+    @objc public static func setTextLocalizer(_ localizer:@escaping ((String)->String)) {
+        textLocalizer = localizer
     }
     
     @objc public static func update(authResult:DBOAuthResult?) {
@@ -225,6 +232,10 @@ class SettingDelegate : NSObject, DBSyncSettingViewControllerDelegate {
     }
     
     public func syncSettingViewControllerDidLogout(_ controller: DBSyncSettingViewController) {
+    }
+    
+    public func localizedString(for controller: DBSyncSettingViewController, ofText text: String) -> String {
+        return DBSyncManager.textLocalizer?(text) ?? text
     }
     
 }

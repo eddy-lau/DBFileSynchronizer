@@ -17,7 +17,7 @@ import DBFileSynchronizer
     
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         DBClientsManager.setup(withAppKey: "l269l58a1s4fck5")
-        DBSyncManager.setup()
+        DBSyncManager.setup(appName: "DBFileSynchronizer")
         return true
     }
     

@@ -212,7 +212,9 @@ enum {
     if (syncError != nil) {
         
         if ([self isLinked]) {
-            message = [NSString stringWithFormat:L(@"⚠️ 上次備份時發生錯誤(%d)。"), syncError.code];
+            if ([syncError.domain isEqualToString:@"DBFileSynchronizer"]) {
+                message = [NSString stringWithFormat:L(@"⚠️ 上次備份時發生錯誤(%d)。"), syncError.code];
+            }
         } else {
             if (syncError.isOAuthError) {
                 message = L(@"⚠️ 登入時發生錯誤，請重新再試。");
