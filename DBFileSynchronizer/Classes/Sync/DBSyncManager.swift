@@ -11,6 +11,8 @@ import BackgroundTasks
 @objc public class DBSyncManager : NSObject {
     
     static var synchronizers = [DBSynchronizer]()
+    static var appName = "DBFileSynchronizer"
+    static var settingDelegate:DBSyncSettingViewControllerDelegate = SettingDelegate()
     
     static var lastRefreshTime:Date? {
         get {
@@ -18,6 +20,15 @@ import BackgroundTasks
         }
         set {
             UserDefaults.standard.lastRefreshTime = newValue
+        }
+    }
+    
+    static var syncError:Error? {
+        set {
+            DBSyncSettingViewController.setSyncError(newValue)
+        }
+        get {
+            DBSyncSettingViewController.syncError()
         }
     }
     
@@ -38,11 +49,26 @@ import BackgroundTasks
     }
     
     @objc public static func sync() {
-        synchronizers.forEach { $0.sync() }
+        
+        syncError = nil
+        var error:Error?
+        var completedCount = 0
+        synchronizers.forEach {
+            $0.sync { err in
+                error = err
+                completedCount += 1
+                if completedCount == synchronizers.count {
+                    syncError = error
+                }
+            }
+        }
     }
     
     @objc public static func sync(id:NSNumber) throws {
-        synchronizers[id.intValue].sync()
+        syncError = nil
+        synchronizers[id.intValue].sync { err in
+            syncError = err
+        }
     }
     
     @objc public static var lastModifiedDate:Date? {
@@ -84,6 +110,13 @@ import BackgroundTasks
         synchronizers[syncableId.intValue].setHasLocalChange(true)
     }
     
+    @objc public static func instantiateSettingViewController() -> UIViewController {
+        let vc = DBSyncSettingViewController()
+        vc.delegate = DBSyncManager.settingDelegate
+        return vc
+    }
+    
+
 }
 
 fileprivate extension NSNotification.Name {
@@ -176,6 +209,26 @@ extension DBSyncManager {
         }
     }
 }
+
+class SettingDelegate : NSObject, DBSyncSettingViewControllerDelegate {
+    
+    public func lastSynchronizedTime(for controller: DBSyncSettingViewController) -> Date? {
+        return DBSyncManager.lastModifiedDate
+    }
+    
+    public func appName(for controller: DBSyncSettingViewController) -> String {
+        return DBSyncManager.appName
+    }
+    
+    public func syncSettingViewControllerDidLogin(_ controller: DBSyncSettingViewController) {
+        DBSyncManager.sync()
+    }
+    
+    public func syncSettingViewControllerDidLogout(_ controller: DBSyncSettingViewController) {
+    }
+    
+}
+
 
 // MARK: - Extensions
 extension String {

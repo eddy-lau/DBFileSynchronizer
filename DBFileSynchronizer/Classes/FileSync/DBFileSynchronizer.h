@@ -9,12 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "DBFileSyncDataSource.h"
 #import "DBFileSyncDelegate.h"
-
-typedef void(^DBSyncCompletionHandler)(NSError * _Nullable);
+#import "DBError.h"
 
 @interface DBFileSynchronizer : NSObject
 
-- (void) sync;
+- (void) sync DEPRECATED_ATTRIBUTE;
 - (void) sync:(DBSyncCompletionHandler _Nullable)completionHandler;
 - (void) setHasLocalChange:(BOOL)hasLocalChange;
 

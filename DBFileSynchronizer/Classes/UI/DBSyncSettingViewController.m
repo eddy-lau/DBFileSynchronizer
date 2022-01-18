@@ -10,10 +10,12 @@
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 #import "DBAccountInfoCell.h"
 #import "DBLegacyKeychain.h"
+#import "DBError.h"
 
 #define L(s) ([self localizedText:(s)])
 
 NSString *DBAccountDidAuthNotification = @"DropboxAccountDidAuthNotification";
+NSString *RefreshMessageNotification = @"RefreshMessageNotification";
 
 
 enum {
@@ -75,7 +77,18 @@ enum {
                                                  name:DBAccountDidAuthNotification
                                                object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(refreshMessageNotification)
+                                                 name:RefreshMessageNotification
+                                               object:nil];
+
+    
     [DBSyncSettingViewController refreshAllAccessTokens:nil];
+}
+
+- (void) reloadData {
+    [self.tableView reloadData];
+    self.tableView.tableFooterView = [self tableFooterView];
 }
 
 + (void) refreshNextAccessToken:(NSMutableArray<DBAccessToken *> *)tokens completion:(DBRefreshTokensCompletion)completion {
@@ -195,20 +208,42 @@ enum {
 
 - (UIView *) tableFooterView {
     
-    NSDate *date = [self.delegate lastSynchronizedTimeForSyncSettingViewController:self];
-    
-    if (date != nil) {
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-        [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
-        [dateFormatter setDoesRelativeDateFormatting:YES];
-    
-        NSString *datePart = [dateFormatter stringFromDate:date];
+    NSString *message = nil;
+    if (syncError != nil) {
         
-        NSString* timePart = [NSDateFormatter localizedStringFromDate: date
-                                                            dateStyle: NSDateFormatterNoStyle
-                                                            timeStyle: NSDateFormatterShortStyle];
+        if ([self isLinked]) {
+            message = [NSString stringWithFormat:L(@"⚠️ 上次備份時發生錯誤(%d)。"), syncError.code];
+        } else {
+            if (syncError.isOAuthError) {
+                message = L(@"⚠️ 登入時發生錯誤，請重新再試。");
+            } else
+            if (syncError.code == DBErrorCodeChangesNotSyncedError) {
+                message = L(@"⚠️ 有新的資料未備份，請登入以啟動備份。");
+            } else {
+                message = L(@"⚠️ 請登入以啟動備份。");
+            }
+        }
         
+    } else {
+        NSDate *date = [self.delegate lastSynchronizedTimeForSyncSettingViewController:self];
+        if (date != nil) {
+            
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+            [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
+            [dateFormatter setDoesRelativeDateFormatting:YES];
+        
+            NSString *datePart = [dateFormatter stringFromDate:date];
+            
+            NSString* timePart = [NSDateFormatter localizedStringFromDate: date
+                                                                dateStyle: NSDateFormatterNoStyle
+                                                                timeStyle: NSDateFormatterShortStyle];
+            
+            message = [NSString stringWithFormat: L(@"上次備份時間: %@, %@"), datePart, timePart];
+        }
+    }
+    
+    if (message != nil) {
         
         UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 120)];
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, view.bounds.size.width-40, view.bounds.size.height - 40)];
@@ -219,7 +254,7 @@ enum {
         label.backgroundColor = [UIColor clearColor];
         label.autoresizingMask |= UIViewAutoresizingFlexibleHeight;
         label.autoresizingMask |= UIViewAutoresizingFlexibleWidth;
-        label.text = [NSString stringWithFormat: L(@"上次備份時間: %@, %@"), datePart, timePart];
+        label.text = message;
         [view addSubview:label];
         
         return view;
@@ -267,7 +302,7 @@ enum {
                         [self.delegate syncSettingViewControllerDidLogout:self];
                     }
                 }
-                [self.tableView reloadData];
+                [self reloadData];
             }];
             
             return cell;
@@ -403,7 +438,7 @@ static NSInteger clickedCount = 0;
                     [UIAlertAction actionWithTitle:L(@"Disconnect") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                         
                         [DBClientsManager unlinkAndResetClients];
-                        [self.tableView reloadData];
+                        [self reloadData];
                         
                         if ([self.delegate respondsToSelector:@selector(syncSettingViewControllerDidLogout:)]) {
                             [self.delegate syncSettingViewControllerDidLogout:self];
@@ -441,13 +476,12 @@ static NSInteger clickedCount = 0;
 - (void) dropboxAccountDidAuthNotification:(NSNotification *)notification {
     
     DBOAuthResult *authResult = notification.userInfo[@"authResult"];
-    [self.tableView reloadData];
-    
     if ([authResult isSuccess]) {
         
         if ([self.delegate respondsToSelector:@selector(syncSettingViewControllerDidLogin:)]) {
             [self.delegate syncSettingViewControllerDidLogin:self];
         }
+        syncError = nil;
 
     } else if ([authResult isCancel]) {
         
@@ -456,9 +490,15 @@ static NSInteger clickedCount = 0;
     } else if ([authResult isError]) {
         
         NSLog(@"Error: %@", authResult.nsError);
+        syncError = authResult.nsError;
         
     }
     
+    [self reloadData];
+}
+
+- (void) refreshMessageNotification {
+    [self reloadData];
 }
 
 - (void)dismissLoading {
@@ -467,6 +507,16 @@ static NSInteger clickedCount = 0;
 
 - (void)showLoading {
     
+}
+
+static NSError *syncError = nil;
++ (void) setSyncError:(NSError *)error {
+    syncError = error;
+    [[NSNotificationCenter defaultCenter] postNotificationName:RefreshMessageNotification object:nil];
+}
+
++ (NSError *) syncError {
+    return syncError;
 }
 
 @end

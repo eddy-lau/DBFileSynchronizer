@@ -175,7 +175,11 @@ NSNotificationName DBSyncableDidFailNotification = @"DBSyncableDidFailNotificati
 }
 
 - (void) sync {
-    [self.fileSynchronizer sync];
+    [self.fileSynchronizer sync:nil];
+}
+
+- (void) sync:(DBSyncCompletionHandler)completion {
+    [self.fileSynchronizer sync:completion];
 }
 
 - (void) setHasLocalChange:(BOOL)hasLocalChange {

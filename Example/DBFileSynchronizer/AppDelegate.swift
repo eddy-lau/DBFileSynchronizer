@@ -34,6 +34,7 @@ import DBFileSynchronizer
     }
     
     public func applicationDidBecomeActive(_ application: UIApplication) {
+        DBSyncManager.sync()
         DBSyncManager.performFetch()
     }
     

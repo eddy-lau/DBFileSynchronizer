@@ -8,11 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import "DBSyncable.h"
+#import "DBError.h"
 
 @interface DBSynchronizer : NSObject
 
 - (instancetype _Nonnull) initWithSyncable:(id<DBSyncable> _Nonnull)syncable;
-- (void) sync;
+- (void) sync DEPRECATED_ATTRIBUTE;
+- (void) sync:(DBSyncCompletionHandler _Nullable)completionHandler;
 - (void) setHasLocalChange:(BOOL)hasLocalChange;
 
 @property (nonatomic,retain) id<DBSyncable> _Nullable syncable;

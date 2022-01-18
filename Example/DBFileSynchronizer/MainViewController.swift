@@ -33,8 +33,6 @@ class MainViewController : UIViewController {
                          name: NSNotification.Name.DBSyncableDidDownload,
                          object: nil)
         
-        syncButton.isEnabled = isLinked
-        
     }
     
 }
@@ -56,8 +54,7 @@ extension MainViewController {
     
     @IBAction func didTapSetting() {
         
-        let vc = DBSyncSettingViewController()
-        vc.delegate = self
+        let vc = DBSyncManager.instantiateSettingViewController()
         vc.title = "Settings"
         vc.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Close", style: .done, target: self, action: #selector(didTapClose))
         let navController = UINavigationController(rootViewController: vc)
@@ -71,27 +68,6 @@ extension MainViewController {
     
     @objc func didTapClose() {
         dismiss(animated: true, completion: nil)
-    }
-    
-}
-
-extension MainViewController : DBSyncSettingViewControllerDelegate {
-    
-    func lastSynchronizedTime(for controller: DBSyncSettingViewController) -> Date? {
-        return DBSyncManager.lastModifiedDate
-    }
-    
-    func appName(for controller: DBSyncSettingViewController) -> String {
-        return "DBFileSynchronizer"
-    }
-    
-    func syncSettingViewControllerDidLogin(_ controller: DBSyncSettingViewController) {
-        syncButton.isEnabled = isLinked
-        DBSyncManager.sync()
-    }
-    
-    func syncSettingViewControllerDidLogout(_ controller: DBSyncSettingViewController) {
-        syncButton.isEnabled = isLinked
     }
     
 }

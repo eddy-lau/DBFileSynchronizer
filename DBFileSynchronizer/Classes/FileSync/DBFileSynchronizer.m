@@ -11,6 +11,13 @@
 #import "DBLocalMetadata.h"
 #import "DBError.h"
 
+#define COMPLETE(completion) \
+if((completion) != nil) { (completion)(nil); }
+
+#define ERROR_COMPLETE(err, completion) \
+if((completion) != nil) { (completion)((err)); }
+
+
 @interface DBRequestError (extension)
 
 @property (nonatomic,readonly) BOOL isPathNotFoundError;
@@ -123,7 +130,7 @@ typedef enum {
     
 }
 
-- (void) saveLocalMetadata:(DBMetadata *)metadata {
+- (NSError *) saveLocalMetadata:(DBMetadata *)metadata {
     
     DBLocalMetadata *localMetadata = [[DBLocalMetadata alloc] initWithMetadata:metadata];
     NSError *error = nil;
@@ -132,24 +139,27 @@ typedef enum {
     if (![data writeToURL:metadataURL options:0 error:&error]) {
         NSLog (@"Cannot save metadata: %@", error);
     }
+    return error;
 }
 
-- (void) uploadFileWithParentRev:(NSString *)rev {
+- (void) uploadFileWithParentRev:(NSString *)rev completion:(DBSyncCompletionHandler)completion {
     
     NSURL *url = [self localURLFromDataSource];
     NSString *destFileName = [self destFileNameFromDataSource];
     NSString *destFoldername = [self destFolderFromDataSource];
     
-    if (![[NSFileManager defaultManager] fileExistsAtPath:url.path]) {
-        NSLog(@"Local file not found, cannot upload.");
+    if (url == nil || destFileName == nil || destFoldername == nil) {
+        ERROR_COMPLETE([NSError programmingError:@"Invalid data from DBFileSyncDataSource."], completion)
         return;
     }
     
-    if (url && destFoldername && destFileName) {
-        
-        // v1
-        // [self.restClient uploadFile:destFileName toPath:destFoldername withParentRev:rev fromPath:url.path];
-        
+
+    if (![[NSFileManager defaultManager] fileExistsAtPath:url.path]) {
+        NSLog(@"Local file not found, cannot upload.");
+        ERROR_COMPLETE([NSError fileNotFoundError:url.path], completion);
+        return;
+    }
+    
         // v2
         DBFILESWriteMode *writeMode = nil;
         
@@ -167,24 +177,21 @@ typedef enum {
                 if (fileMetadata) {
                     
                     DBMetadata *metadata = [[DBMetadata alloc] initWithFilesMetadata:fileMetadata];
-                    [self restClient:self.restClient uploadedFile:destFileName from:url.path metadata:metadata];
+                    [self restClient:self.restClient uploadedFile:destFileName from:url.path metadata:metadata completion:completion];
                     
                 } else {
                     
                     NSError *error = [NSError uploadFileError:destPath];
-                    [self restClient:self.restClient uploadFileFailedWithError:error];
+                    [self restClient:self.restClient uploadFileFailedWithError:error completion:completion];
                     
                 }
                 
             }
          ];
         
-    } else {
-        NSLog(@"Null URL or destFileName or destFolderName");
-    }
 }
 
-- (void) downloadFileAtRev:(NSString *)rev {
+- (void) downloadFileAtRev:(NSString *)rev completion:(DBSyncCompletionHandler)completion {
     
     self.downloadForMerge = NO;
     NSURL *url = [self localURLFromDataSource];
@@ -199,9 +206,6 @@ typedef enum {
         destPathOrRev = destPath;
     }
     
-    // v1
-    //[self.restClient loadFile:destPath atRev:rev intoPath:url.path];
-    
     // v2
     [[[self.restClient filesRoutes] downloadUrl:destPathOrRev rev:nil overwrite:YES destination:url]
         setResponseBlock:^(DBFILESFileMetadata *fileMetadata, DBFILESDownloadError *routeError, DBRequestError *error, NSURL *url) {
@@ -209,12 +213,12 @@ typedef enum {
             if (fileMetadata) {
                 
                 DBMetadata *metadata = [[DBMetadata alloc] initWithFilesMetadata:fileMetadata];
-                [self restClient:self.restClient loadedFile:url.path contentType:@"" metadata:metadata];
+                [self restClient:self.restClient loadedFile:url.path contentType:@"" metadata:metadata completion:completion];
                 
             } else {
                 
                 NSError *error = [NSError downloadFileError:destPathOrRev];
-                [self restClient:self.restClient loadFileFailedWithError:error];
+                [self restClient:self.restClient loadFileFailedWithError:error completion:completion];
                 
             }
             
@@ -222,7 +226,7 @@ typedef enum {
      ];
 }
 
-- (void) mergeFileAtRev:(NSString *)rev {
+- (void) mergeFileAtRev:(NSString *)rev completion:(DBSyncCompletionHandler)completion {
     
     self.downloadForMerge = YES;
     
@@ -239,9 +243,6 @@ typedef enum {
         destPathOrRev = destPath;
     }
     
-    // v1
-    //[self.restClient loadFile:destPath atRev:rev intoPath:localFile];
-    
     // v2
     [[[self.restClient filesRoutes] downloadUrl:destPathOrRev rev:nil overwrite:YES destination:url]
      setResponseBlock:^(DBFILESFileMetadata *fileMetadata, DBFILESDownloadError *routeError, DBRequestError *error, NSURL *url) {
@@ -249,29 +250,21 @@ typedef enum {
          if (fileMetadata) {
              
              DBMetadata *metadata = [[DBMetadata alloc] initWithFilesMetadata:fileMetadata];
-             [self restClient:self.restClient loadedFile:destPath contentType:@"" metadata:metadata];
+             [self restClient:self.restClient loadedFile:destPath contentType:@"" metadata:metadata completion:completion];
              
          } else {
              
-             NSString *message =
-                [NSString stringWithFormat:@"Couldn't load file: %@", destPathOrRev];
-             
-             NSError *error =
-                [NSError errorWithDomain:@"DBFileSynchronizer"
-                                    code:-1
-                                userInfo:@{NSLocalizedDescriptionKey:message}];
-             
-             [self restClient:self.restClient loadFileFailedWithError:error];
+             NSError *error = [NSError downloadFileError:destPathOrRev];
+             [self restClient:self.restClient loadFileFailedWithError:error completion:completion];
              
          }
          
-     }
-     ];
+     }];
 }
 
 #pragma mark DBRestClientDelegate
 
-- (void) restClient:(DBUserClient *)client loadedMetadata:(DBMetadata *)metadata {
+- (void) restClient:(DBUserClient *)client loadedMetadata:(DBMetadata *)metadata completion:(DBSyncCompletionHandler)completion {
     
     DBLocalMetadata *localMetadata = [self localMetadata];
     
@@ -281,7 +274,7 @@ typedef enum {
         /* The file doesn't exist,
          * Download from remote
          */
-        [self downloadFileAtRev:metadata.rev];
+        [self downloadFileAtRev:metadata.rev completion:completion];
         
     } else {
     
@@ -290,13 +283,13 @@ typedef enum {
             /* Local metadata not found but there exists a remote file
              * Do merge
              */
-            [self mergeFileAtRev:metadata.rev];
+            [self mergeFileAtRev:metadata.rev completion:completion];
             
         } else {
             
             if (metadata.isDeleted) {
                 
-                [self uploadFileWithParentRev:metadata.rev];
+                [self uploadFileWithParentRev:metadata.rev completion:completion];
                 
             } else {
             
@@ -310,7 +303,7 @@ typedef enum {
                          * Upload the local file
                          */
                         
-                        [self uploadFileWithParentRev:metadata.rev];
+                        [self uploadFileWithParentRev:metadata.rev completion:completion];
                         
                     } else {
                         
@@ -318,6 +311,7 @@ typedef enum {
                          * The file should be same as remote
                          * Nothing to do
                          */
+                        COMPLETE(completion)
                         
                     }
                     
@@ -330,14 +324,14 @@ typedef enum {
                         /* Has local change
                          * Do merge
                          */
-                        [self mergeFileAtRev:metadata.rev];
+                        [self mergeFileAtRev:metadata.rev completion:completion];
                         
                     } else {
                         
                         /* No local change
                          * Download the newer copy
                          */
-                        [self downloadFileAtRev:metadata.rev];
+                        [self downloadFileAtRev:metadata.rev completion:completion];
                         
                     }
                     
@@ -351,7 +345,7 @@ typedef enum {
     
 }
 
-- (void) restClient:(DBUserClient *)client loadMetadataFailedWithError:(NSError *)error {
+- (void) restClient:(DBUserClient *)client loadMetadataFailedWithError:(NSError *)error completion:(DBSyncCompletionHandler)completion {
     
     BOOL fileNotFound = error.code == 404 && [error.domain isEqualToString:@"dropbox.com"];
     
@@ -361,19 +355,20 @@ typedef enum {
          * The metadata or the file doesn't exist on Dropbox.
          * Just upload the local file.
          */
-        [self uploadFileWithParentRev:nil];
+        [self uploadFileWithParentRev:nil completion:completion];
         
     } else {
         
         if ([self.delegate respondsToSelector:@selector(fileSynchronizer:didFailWithError:)]) {
             [self.delegate fileSynchronizer:self didFailWithError:error];
         }
+        ERROR_COMPLETE(error, completion)
         
     }
     
 }
 
-- (void) restClient:(DBUserClient *)client loadedFile:(NSString *)destPath contentType:(NSString *)contentType metadata:(DBMetadata *)metadata {
+- (void) restClient:(DBUserClient *)client loadedFile:(NSString *)destPath contentType:(NSString *)contentType metadata:(DBMetadata *)metadata completion:(DBSyncCompletionHandler)completion {
 
     if (self.downloadForMerge) {
         
@@ -385,53 +380,57 @@ typedef enum {
         if ([self localMetadata].hasLocalChange) {
             
             NSLog (@"Uploading merged file");
-            [self uploadFileWithParentRev:metadata.rev];
+            [self uploadFileWithParentRev:metadata.rev completion:completion];
             
         } else {
             
             NSLog (@"Remote file is same as local file");
-            [self saveLocalMetadata:metadata];
+            NSError *error = [self saveLocalMetadata:metadata];
+            ERROR_COMPLETE(error, completion)
             
         }
         
     } else {
         
         NSLog (@"Loaded remote file: %@", destPath);
-        [self saveLocalMetadata:metadata];
+        NSError *error = [self saveLocalMetadata:metadata];
         
         if ([self.delegate respondsToSelector:@selector(fileSynchronizer:didDownloadFileAtPath:)]) {
             [self.delegate fileSynchronizer:self didDownloadFileAtPath:destPath];
         }
         
+        ERROR_COMPLETE(error, completion)
     }
     
 }
 
-- (void) restClient:(DBUserClient *)client loadFileFailedWithError:(NSError *)error {
+- (void) restClient:(DBUserClient *)client loadFileFailedWithError:(NSError *)error completion:(DBSyncCompletionHandler)completion {
     
     NSLog (@"Error: %@", error);
     if ([self.delegate respondsToSelector:@selector(fileSynchronizer:didFailWithError:)]) {
         [self.delegate fileSynchronizer:self didFailWithError:error];
     }
-    
+    ERROR_COMPLETE(error, completion)
 }
 
-- (void) restClient:(DBUserClient *)client uploadedFile:(NSString *)destPath from:(NSString *)srcPath metadata:(DBMetadata *)metadata {
+- (void) restClient:(DBUserClient *)client uploadedFile:(NSString *)destPath from:(NSString *)srcPath metadata:(DBMetadata *)metadata completion:(DBSyncCompletionHandler)completion {
     
     NSLog (@"Uploaded: %@", destPath);
-    [self saveLocalMetadata:metadata];
+    NSError *error = [self saveLocalMetadata:metadata];
     
     if ([self.delegate respondsToSelector:@selector(fileSynchronizer:didUploadFileAtPath:)]) {
         [self.delegate fileSynchronizer:self didUploadFileAtPath:srcPath];
     }
+    ERROR_COMPLETE(error, completion)
 }
 
-- (void) restClient:(DBUserClient *)client uploadFileFailedWithError:(NSError *)error {
+- (void) restClient:(DBUserClient *)client uploadFileFailedWithError:(NSError *)error completion:(DBSyncCompletionHandler)completion {
     
     NSLog (@"Sync upload failed: %@", error);
     if ([self.delegate respondsToSelector:@selector(fileSynchronizer:didFailWithError:)]) {
         [self.delegate fileSynchronizer:self didFailWithError:error];
     }
+    ERROR_COMPLETE(error, completion)
 }
 
 #pragma mark public methods
@@ -440,26 +439,37 @@ typedef enum {
     [self sync:nil];
 }
 
-- (void) sync:(DBSyncCompletionHandler _Nullable)completionHandler {
+- (void) sync:(DBSyncCompletionHandler _Nullable)completion {
 
     if (self.restClient == nil) {
+        
+        NSError *error = nil;
         if ([self localMetadata].hasLocalChange) {
             NSLog(@"Warning: couldn't sync local change");
-            NSError *error = [NSError notLoggedInError];
-            if (completionHandler) {
-                completionHandler(error);
-            }
+            error = [NSError changesNotSyncedError];
+        } else {
+            // Not logged in and no Local change.
+            // No need to report error for this case.
         }
+        ERROR_COMPLETE(error, completion)
         return;
     }
     
     // v2
     // Step 0
     [[[self.restClient usersRoutes] getCurrentAccount]
-        setResponseBlock:^(DBUSERSFullAccount *account, DBNilObject *nilObj, DBRequestError *error) {
+        setResponseBlock:^(DBUSERSFullAccount *account, DBNilObject *nilObj, DBRequestError *dbError) {
+
+                if (dbError) {
+                    ERROR_COMPLETE([NSError errorWithRequestError:dbError], completion)
+                    return;
+                }
+        
+                if (nil == account) {
+                    ERROR_COMPLETE([NSError notLoggedInError], completion)
+                    return;
+                }
             
-            if (account) {
-                
                 self.accountId = account.accountId;
                 
                 /*
@@ -470,16 +480,12 @@ typedef enum {
                 NSString *destFoldername = [self destFolderFromDataSource];
                 NSString *path = [destFoldername stringByAppendingPathComponent:destFileName];
                 
-                // v1
-                // [self.restClient loadMetadata:path];
-                
-                // v2
                 [[[self.restClient filesRoutes] getMetadata:path]
                     setResponseBlock:^(DBFILESMetadata *filesMetadata, DBFILESGetMetadataError *routeError, DBRequestError *dbError) {
 
                         if (filesMetadata && [filesMetadata isKindOfClass:[DBFILESFileMetadata class]]) {
                             DBMetadata *metadata = [[DBMetadata alloc] initWithFilesMetadata:(DBFILESFileMetadata *)filesMetadata];
-                            [self restClient:self.restClient loadedMetadata:metadata];
+                            [self restClient:self.restClient loadedMetadata:metadata completion:completion];
                             
                         } else if (dbError.isPathNotFoundError) {
                             
@@ -488,43 +494,22 @@ typedef enum {
                                  * The metadata or the file doesn't exist on Dropbox.
                                  * Just upload the local file.
                                  */
-                                [self uploadFileWithParentRev:nil];
+                                [self uploadFileWithParentRev:nil completion:completion];
                             } @catch( NSException *exception) {
                                 NSLog(@"We crashed: %@", exception);
+                                ERROR_COMPLETE([NSError errorWithException:exception], completion);
                             }
                             
                         } else {
                            
-                            NSString *message = dbError.errorContent;
-                            if (message == nil) {
-                                message = [NSString stringWithFormat:@"Error message: %@", dbError.description];
-                            }
-                            
-                            NSError *error =
-                                [NSError errorWithDomain:@"DBFileSynchronizer"
-                                                    code:dbError.statusCode.integerValue
-                                                userInfo:@{NSLocalizedDescriptionKey:message}];
-                            
-                            [self restClient:self.restClient loadMetadataFailedWithError:error];
+                            NSError *error = [NSError errorWithRequestError:dbError];
+                            [self restClient:self.restClient loadMetadataFailedWithError:error completion:completion];
                         }
                         
                     }
                  ];
                 
                 
-            } else {
-                
-                NSString *message =
-                    [NSString stringWithFormat:@"Couldn't get current account: %@", error.description];
-                NSError *error =
-                    [NSError errorWithDomain:@"DBFileSynchronizer"
-                                        code:-1
-                                    userInfo:@{NSLocalizedDescriptionKey:message}];
-                
-                
-                [self restClient:self.restClient loadMetadataFailedWithError:error];
-            }
-            
         }
      ];
 

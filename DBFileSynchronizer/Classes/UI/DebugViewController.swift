@@ -14,6 +14,7 @@ class DebugViewController : UITableViewController {
     @IBOutlet weak var expiryTimeLabel:UILabel!
     @IBOutlet weak var appRefreshStateLabel:UILabel!
     @IBOutlet weak var lastRefreshTimeLabel:UILabel!
+    @IBOutlet weak var errorLabel:UILabel!
     
     var accessToken:DBAccessToken? {
         guard let oauthManager = DBOAuthManager.shared() else {
@@ -44,6 +45,7 @@ class DebugViewController : UITableViewController {
         expiryTimeLabel.text = tokenExpiryTime
         appRefreshStateLabel.text = appRefreshEnabled
         lastRefreshTimeLabel.text = DBSyncManager.lastRefreshTime?.formattedString
+        errorLabel.text = DBSyncManager.syncError?.localizedDescription ?? "None"
     }
     
     @IBAction func didTapDone() {

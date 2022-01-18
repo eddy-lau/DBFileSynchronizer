@@ -112,6 +112,27 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
+                            <tableViewSection headerTitle="Error" id="r20-bI-9Vi">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="wIi-Aq-ilG" style="IBUITableViewCellStyleDefault" id="Gji-FS-2Xw">
+                                        <rect key="frame" x="20" y="323.5" width="374" height="43.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Gji-FS-2Xw" id="71H-KJ-oGb">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="None" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="wIi-Aq-ilG">
+                                                    <rect key="frame" x="20" y="0.0" width="334" height="43.5"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="0.0"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="JsC-oH-ZHn" id="13Y-qd-m2K"/>
@@ -127,6 +148,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="appRefreshStateLabel" destination="UTf-wa-rm9" id="1bU-bH-DDz"/>
+                        <outlet property="errorLabel" destination="wIi-Aq-ilG" id="vo3-iT-XcO"/>
                         <outlet property="expiryTimeLabel" destination="cZd-gP-BRE" id="1do-s9-aEK"/>
                         <outlet property="lastRefreshTimeLabel" destination="bk7-Nn-x9m" id="6BM-Z9-1Mf"/>
                         <outlet property="tokenLabel" destination="FLK-KG-0Lt" id="5wn-CX-QNY"/>
