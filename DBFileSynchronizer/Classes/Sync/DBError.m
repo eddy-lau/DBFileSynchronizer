@@ -93,4 +93,26 @@
     return [[self domain] isEqualToString:@"com.dropbox.dropbox_sdk_obj_c.oauth.error"];
 }
 
+- (NSString *) warningMessage {
+    
+    NSString *message = nil;
+    
+    if ([DBClientsManager authorizedClient] != nil) {
+        if ([self.domain isEqualToString:ErrDomain]) {
+            message = [NSString stringWithFormat:@"⚠️ 上次備份時發生錯誤(%d)。", self.code];
+        }
+    } else {
+        if (self.isOAuthError) {
+            message = @"⚠️ 登入時發生錯誤，請重新再試。";
+        } else
+        if (self.code == DBErrorCodeChangesNotSyncedError) {
+            message = @"⚠️ 有新的資料未備份，請登入以啟動備份。";
+        } else {
+            message = @"⚠️ 請登入以啟動備份。";
+        }
+    }
+    
+    return message;
+}
+
 @end

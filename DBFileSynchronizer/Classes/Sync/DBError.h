@@ -33,6 +33,7 @@ typedef NS_ENUM(NSInteger, DBErrorCode) {
 + (NSError * _Nonnull) programmingError:(NSString * _Nonnull)description;
 + (NSError * _Nonnull) changesNotSyncedError;
 - (BOOL) isOAuthError;
+- (NSString * _Nullable) warningMessage;
 
 @end
 
