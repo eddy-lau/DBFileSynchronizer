@@ -207,13 +207,32 @@ enum {
 }
 
 - (UIView *) tableFooterView {
-    
+
     NSString *message = nil;
+    NSDate *date = [self.delegate lastSynchronizedTimeForSyncSettingViewController:self];
+    if (date != nil) {
+        
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+        [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
+        [dateFormatter setDoesRelativeDateFormatting:YES];
+    
+        NSString *datePart = [dateFormatter stringFromDate:date];
+        
+        NSString* timePart = [NSDateFormatter localizedStringFromDate: date
+                                                            dateStyle: NSDateFormatterNoStyle
+                                                            timeStyle: NSDateFormatterShortStyle];
+        
+        message = [NSString stringWithFormat: L(@"上次備份時間: %@, %@"), datePart, timePart];
+    }
+    
     if (syncError != nil) {
         
         if ([self isLinked]) {
             if ([syncError.domain isEqualToString:@"DBFileSynchronizer"]) {
                 message = [NSString stringWithFormat:L(@"⚠️ 上次備份時發生錯誤(%d)。"), syncError.code];
+            } else {
+                // 
             }
         } else {
             if (syncError.isOAuthError) {
@@ -227,22 +246,6 @@ enum {
         }
         
     } else {
-        NSDate *date = [self.delegate lastSynchronizedTimeForSyncSettingViewController:self];
-        if (date != nil) {
-            
-            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-            [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-            [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
-            [dateFormatter setDoesRelativeDateFormatting:YES];
-        
-            NSString *datePart = [dateFormatter stringFromDate:date];
-            
-            NSString* timePart = [NSDateFormatter localizedStringFromDate: date
-                                                                dateStyle: NSDateFormatterNoStyle
-                                                                timeStyle: NSDateFormatterShortStyle];
-            
-            message = [NSString stringWithFormat: L(@"上次備份時間: %@, %@"), datePart, timePart];
-        }
     }
     
     if (message != nil) {
