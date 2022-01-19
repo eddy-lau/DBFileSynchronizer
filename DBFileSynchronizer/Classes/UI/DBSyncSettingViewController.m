@@ -227,25 +227,10 @@ enum {
     }
     
     if (syncError != nil) {
-        
-        if ([self isLinked]) {
-            if ([syncError.domain isEqualToString:@"DBFileSynchronizer"]) {
-                message = [NSString stringWithFormat:L(@"⚠️ 上次備份時發生錯誤(%d)。"), syncError.code];
-            } else {
-                // 
-            }
-        } else {
-            if (syncError.isOAuthError) {
-                message = L(@"⚠️ 登入時發生錯誤，請重新再試。");
-            } else
-            if (syncError.code == DBErrorCodeChangesNotSyncedError) {
-                message = L(@"⚠️ 有新的資料未備份，請登入以啟動備份。");
-            } else {
-                message = L(@"⚠️ 請登入以啟動備份。");
-            }
+        NSString *warningMessage = [syncError warningMessage];
+        if (warningMessage != nil) {
+            message = L(warningMessage);
         }
-        
-    } else {
     }
     
     if (message != nil) {
