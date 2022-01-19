@@ -8,7 +8,6 @@
 import Foundation
 import BackgroundTasks
 
-
 @objc public class DBSyncManager : NSObject {
     
     static var synchronizers = [DBSynchronizer]()
@@ -27,7 +26,12 @@ import BackgroundTasks
     
     @objc public static var syncError:Error? {
         set {
+            let oldValue = DBSyncSettingViewController.syncError()
+            let changed = newValue != nil || oldValue != nil
             DBSyncSettingViewController.setSyncError(newValue)
+            if changed {
+                NotificationCenter.default.post(name: NSNotification.Name.DBSyncManagerErrorStatusDidChange, object: self)
+            }
         }
         get {
             DBSyncSettingViewController.syncError()
@@ -122,8 +126,6 @@ import BackgroundTasks
         vc.delegate = DBSyncManager.settingDelegate
         return vc
     }
-    
-
 }
 
 fileprivate extension NSNotification.Name {
