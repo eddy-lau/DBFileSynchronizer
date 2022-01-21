@@ -8,3 +8,4 @@
 #import <Foundation/Foundation.h>
 
 NSNotificationName DBSyncManagerErrorStatusDidChangeNotification = @"DBSyncManagerErrorStatusDidChangeNotification";
+NSNotificationName DBSyncErrorDidUpdateNotification = @"DBSyncErrorDidUpdateNotification";

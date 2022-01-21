@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
+#import "DBError.h"
 
 @class DBSyncSettingViewController;
 @protocol DBSyncSettingViewControllerDelegate <NSObject>
@@ -33,8 +34,5 @@ typedef void (^DBRefreshTokensCompletion)(void);
 + (void) refreshWithAuthResult:(DBOAuthResult * _Nullable)authResult;
 + (void) refreshAllAccessTokens:(DBRefreshTokensCompletion _Nullable)completion;
 + (void) fixKeychainBug;
-+ (void) setSyncError:(NSError * _Nullable)error;
-+ (NSError * _Nullable) syncError;
-
 
 @end

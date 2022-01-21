@@ -12,5 +12,7 @@ extern NSNotificationName DBSyncableDidDownloadNotification;
 extern NSNotificationName DBSyncableDidUploadNotification;
 extern NSNotificationName DBSyncableDidFailNotification;
 extern NSNotificationName DBSyncManagerErrorStatusDidChangeNotification;
+extern NSNotificationName DBSyncErrorDidUpdateNotification;
+extern NSNotificationName RefreshMessageNotification;
 
 #endif /* DBSyncableNotification_h */

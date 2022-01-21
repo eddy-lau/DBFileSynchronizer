@@ -24,17 +24,18 @@ import BackgroundTasks
         }
     }
     
+    public static var errorStatus:DBErrorStatus? {
+        DBErrorStatusHelper.getErrorStatus()
+    }
+    
     @objc public static var syncError:Error? {
         set {
-            let oldValue = DBSyncSettingViewController.syncError()
-            let changed = newValue != nil || oldValue != nil
-            DBSyncSettingViewController.setSyncError(newValue)
-            if changed {
+            if DBErrorStatusHelper.set(error: newValue as NSError?) {
                 NotificationCenter.default.post(name: NSNotification.Name.DBSyncManagerErrorStatusDidChange, object: self)
             }
         }
         get {
-            DBSyncSettingViewController.syncError()
+            DBErrorStatusHelper.getErrorStatus()?.error
         }
     }
     
@@ -42,6 +43,10 @@ import BackgroundTasks
         self.appName = appName
         fixKeychainBug()
         setupBackgroundTask()
+        
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.DBSyncErrorDidUpdate, object: nil, queue: nil) { _ in
+            NotificationCenter.default.post(name: NSNotification.Name.DBSyncManagerErrorStatusDidChange, object: self)
+        }
     }
     
     @objc public static func setTextLocalizer(_ localizer:@escaping ((String)->String)) {

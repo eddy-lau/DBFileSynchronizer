@@ -11,12 +11,20 @@
 #import "DBAccountInfoCell.h"
 #import "DBLegacyKeychain.h"
 #import "DBError.h"
+#import "DBSyncableNotification.h"
+#import "DBErrorStatusHelper.h"
 
 #define L(s) ([self localizedText:(s)])
 
-NSString *DBAccountDidAuthNotification = @"DropboxAccountDidAuthNotification";
-NSString *RefreshMessageNotification = @"RefreshMessageNotification";
+NSNotificationName DBAccountDidAuthNotification = @"DropboxAccountDidAuthNotification";
+NSNotificationName RefreshMessageNotification = @"RefreshMessageNotification";
 
+@interface DBErrorStatusHelper()
++ (void) setWithError:(NSError * _Nullable)error isRead:(BOOL)isRead;
++ (NSString *) warningMessage;
++ (void) markAsRead;
++ (void) clear;
+@end
 
 enum {
     SECTION_DROPBOX_ACCOUNT = 0,
@@ -35,13 +43,13 @@ enum {
 
 @end
 
+#pragma clang diagnostic ignored "-Wincomplete-implementation"
 @implementation DBSyncSettingViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        
     }
     return self;
 }
@@ -167,6 +175,10 @@ enum {
     // Dispose of any resources that can be recreated.
 }
 
+- (void) viewWillAppear:(BOOL)animated {
+    [DBErrorStatusHelper markAsRead];
+}
+
 #pragma mark localization helpers
 
 
@@ -226,11 +238,8 @@ enum {
         message = [NSString stringWithFormat: L(@"上次備份時間: %@, %@"), datePart, timePart];
     }
     
-    if (syncError != nil) {
-        NSString *warningMessage = [syncError warningMessage];
-        if (warningMessage != nil) {
-            message = L(warningMessage);
-        }
+    if ([DBErrorStatusHelper warningMessage] != nil) {
+        message = L([DBErrorStatusHelper warningMessage]);
     }
     
     if (message != nil) {
@@ -471,7 +480,7 @@ static NSInteger clickedCount = 0;
         if ([self.delegate respondsToSelector:@selector(syncSettingViewControllerDidLogin:)]) {
             [self.delegate syncSettingViewControllerDidLogin:self];
         }
-        syncError = nil;
+        [DBErrorStatusHelper setWithError:nil isRead:NO];
 
     } else if ([authResult isCancel]) {
         
@@ -480,7 +489,7 @@ static NSInteger clickedCount = 0;
     } else if ([authResult isError]) {
         
         NSLog(@"Error: %@", authResult.nsError);
-        syncError = authResult.nsError;
+        [DBErrorStatusHelper setWithError:authResult.nsError isRead:NO];
         
     }
     
@@ -497,16 +506,6 @@ static NSInteger clickedCount = 0;
 
 - (void)showLoading {
     
-}
-
-static NSError *syncError = nil;
-+ (void) setSyncError:(NSError *)error {
-    syncError = error;
-    [[NSNotificationCenter defaultCenter] postNotificationName:RefreshMessageNotification object:nil];
-}
-
-+ (NSError *) syncError {
-    return syncError;
 }
 
 @end

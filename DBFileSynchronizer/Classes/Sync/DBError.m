@@ -99,7 +99,7 @@
     
     if ([DBClientsManager authorizedClient] != nil) {
         if ([self.domain isEqualToString:ErrDomain]) {
-            message = [NSString stringWithFormat:@"⚠️ 上次備份時發生錯誤(%d)。", self.code];
+            message = [NSString stringWithFormat:@"⚠️ 上次備份時發生錯誤(%ld)。", self.code];
         }
     } else {
         if (self.isOAuthError) {
