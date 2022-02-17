@@ -1,5 +1,5 @@
 PODS:
-  - DBFileSynchronizer (3.1.1):
+  - DBFileSynchronizer (3.2.0):
     - ObjectiveDropboxOfficial (~> 6.0)
   - ObjectiveDropboxOfficial (6.2.3)
 
@@ -15,7 +15,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  DBFileSynchronizer: abe48d57c930fbc1b8553665596174637e69a673
+  DBFileSynchronizer: e05b5edaa7a4a5f9f8e1a0b9454c1d640337e2b9
   ObjectiveDropboxOfficial: fe206ce8c0bc49976c249d472db7fdbc53ebbd53
 
 PODFILE CHECKSUM: 195ac7ddac2e974bdd7583aa64a381ac46db2a13

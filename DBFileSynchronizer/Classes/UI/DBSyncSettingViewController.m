@@ -62,7 +62,11 @@ enum {
     
     CGRect rect = [UIScreen mainScreen].bounds;
     
-    UITableView *tableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStyleGrouped];
+    UITableViewStyle style = UITableViewStyleGrouped;
+    if (@available(iOS 13.0, *)) {
+        style = UITableViewStyleInsetGrouped;
+    }
+    UITableView *tableView = [[UITableView alloc] initWithFrame:rect style:style];
     self.tableView = tableView;
     self.tableView.autoresizingMask |= UIViewAutoresizingFlexibleHeight;
     self.tableView.autoresizingMask |= UIViewAutoresizingFlexibleWidth;
@@ -206,8 +210,8 @@ enum {
     
     
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 130)];
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, view.bounds.size.width-40, view.bounds.size.height - 40)];
-    label.numberOfLines = 1000;
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(30, 30, view.bounds.size.width-40, view.bounds.size.height - 40)];
+    label.numberOfLines = -1;
     label.backgroundColor = [UIColor clearColor];
     label.autoresizingMask |= UIViewAutoresizingFlexibleHeight;
     label.autoresizingMask |= UIViewAutoresizingFlexibleWidth;
@@ -311,19 +315,22 @@ enum {
             NSString *cellId = @"dbConnectButtonCell";
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
             if (cell == nil) {
-                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellId];
                 cell.textLabel.textAlignment = NSTextAlignmentLeft;
                 cell.textLabel.textColor = [UIColor colorWithRed:0.0 green:122.0/255.0 blue:255.0/255.0 alpha:1.0];
+                cell.detailTextLabel.textColor = [UIColor grayColor];
             }
             
             if (self.isLinked) {
                 
                 cell.textLabel.text = L(@"登出");
+                cell.detailTextLabel.text = L(@"按下登出 Dropbox 帳戶");
                 
             } else {
                 
                 cell.textLabel.text = L(@"登入");
-                
+                cell.detailTextLabel.text = L(@"按下登入 Dropbox 帳戶");
+
             }
             
             return cell;
@@ -346,29 +353,6 @@ enum {
         return nil;
     }
     
-}
-
-- (UIView *) tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
-    
-    if (section == SECTION_DROPBOX_ACCOUNT) {
-        
-        UILabel *footerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 30)];
-        footerLabel.backgroundColor = [UIColor clearColor];
-        footerLabel.textColor = [UIColor grayColor];
-        footerLabel.font = [UIFont systemFontOfSize:14.0];
-        footerLabel.textAlignment = NSTextAlignmentCenter;
-        
-        if (self.isLinked) {
-            footerLabel.text = L(@"按下登出 Dropbox 帳戶"); //ZHLocalizedString(@"Tap to disconnect this Dropbox account", @"");
-        } else {
-            footerLabel.text = L(@"按下登入 Dropbox 帳戶"); //ZHLocalizedString(@"Tap to connect a Dropbox account", @"");
-        }
-        
-        return footerLabel;
-        
-    } else {
-        return nil;
-    }
 }
 
 static NSInteger clickedCount = 0;
