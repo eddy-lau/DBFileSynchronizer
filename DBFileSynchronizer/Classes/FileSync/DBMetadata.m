@@ -10,6 +10,10 @@
 
 @implementation DBMetadata
 
++ (BOOL) supportsSecureCoding {
+    return YES;
+}
+
 + (NSDateFormatter*)dateFormatter {
     NSMutableDictionary* dictionary = [[NSThread currentThread] threadDictionary];
     static NSString* dateFormatterKey = @"DBMetadataDateFormatter";
@@ -163,16 +167,16 @@
     if ((self = [super init])) {
         thumbnailExists = [coder decodeBoolForKey:@"thumbnailExists"];
         totalBytes = [coder decodeInt64ForKey:@"totalBytes"];
-        lastModifiedDate = [coder decodeObjectForKey:@"lastModifiedDate"];
-        clientMtime = [coder decodeObjectForKey:@"clientMtime"];
-        path = [coder decodeObjectForKey:@"path"];
+        lastModifiedDate = [coder decodeObjectOfClass:[NSDate class] forKey:@"lastModifiedDate"];
+        clientMtime = [coder decodeObjectOfClass:[NSDate class] forKey:@"clientMtime"];
+        path = [coder decodeObjectOfClass:[NSString class] forKey:@"path"];
         isDirectory = [coder decodeBoolForKey:@"isDirectory"];
-        contents = [coder decodeObjectForKey:@"contents"];
-        hash = [coder decodeObjectForKey:@"hash"];
-        humanReadableSize = [coder decodeObjectForKey:@"humanReadableSize"];
-        root = [coder decodeObjectForKey:@"root"];
-        icon = [coder decodeObjectForKey:@"icon"];
-        rev = [coder decodeObjectForKey:@"rev"];
+        contents = [coder decodeObjectOfClass:[NSArray class] forKey:@"contents"];
+        hash = [coder decodeObjectOfClass:[NSString class] forKey:@"hash"];
+        humanReadableSize = [coder decodeObjectOfClass:[NSString class] forKey:@"humanReadableSize"];
+        root = [coder decodeObjectOfClass:[NSString class] forKey:@"root"];
+        icon = [coder decodeObjectOfClass:[NSString class] forKey:@"icon"];
+        rev = [coder decodeObjectOfClass:[NSString class] forKey:@"rev"];
         revision = [coder decodeInt64ForKey:@"revision"];
         isDeleted = [coder decodeBoolForKey:@"isDeleted"];
 		if( [coder containsValueForKey:@"videoDuration"] )

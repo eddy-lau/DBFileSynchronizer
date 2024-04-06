@@ -7,7 +7,7 @@
 //
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 
-@interface DBMetadata : NSObject <NSCoding> {
+@interface DBMetadata : NSObject <NSSecureCoding> {
     BOOL thumbnailExists;
     long long totalBytes;
     NSDate* lastModifiedDate;

@@ -10,6 +10,10 @@
 
 @implementation DBLocalMetadata
 
++ (BOOL) supportsSecureCoding {
+    return YES;
+}
+
 - (id) initWithMetadata:(DBMetadata *)metadata {
     
     self = [super init];
