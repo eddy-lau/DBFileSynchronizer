@@ -402,7 +402,7 @@ static NSInteger clickedCount = 0;
                                                  controller:self
                                       loadingStatusDelegate:self
                                                     openURL:^(NSURL * _Nonnull url) {
-                    [[UIApplication sharedApplication] openURL:url];
+                    [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
                 } scopeRequest:nil];
                 
             } else {

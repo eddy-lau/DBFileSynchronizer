@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'DBFileSynchronizer'
-  s.version          = '3.2.1'
+  s.version          = '3.3.0'
   s.summary          = 'Dropbox file sync utilities'
   s.description      = <<-DESC
 Objective-C utilities classes for syncing objects or files on Dropbox
@@ -10,7 +10,7 @@ Objective-C utilities classes for syncing objects or files on Dropbox
   s.author           = { 'Eddie Lau' => 'eddie@touchutility.com' }
   s.source           = { :git => 'https://github.com/eddy-lau/DBFileSynchronizer.git', :tag => s.version.to_s }
   s.swift_version    = '4.2'
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '12.0'
   s.source_files = 'DBFileSynchronizer/Classes/**/*'
   s.resource_bundles = {
     "DBFileSynchronizer" => ['DBFileSynchronizer/Assets/**/*.{png,storyboard}']
@@ -21,5 +21,5 @@ Objective-C utilities classes for syncing objects or files on Dropbox
     'DBFileSynchronizer/Classes/FileSync/*.h',
     'DBFileSynchronizer/Classes/UI/DBAccountInfoCell.h'
   ]
-  s.dependency 'ObjectiveDropboxOfficial', '~> 6.0'
+  s.dependency 'ObjectiveDropboxOfficial', '~> 6'
 end

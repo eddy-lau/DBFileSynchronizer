@@ -1,7 +1,7 @@
 PODS:
-  - DBFileSynchronizer (3.2.0):
-    - ObjectiveDropboxOfficial (~> 6.0)
-  - ObjectiveDropboxOfficial (6.2.3)
+  - DBFileSynchronizer (3.3.0):
+    - ObjectiveDropboxOfficial (~> 6)
+  - ObjectiveDropboxOfficial (6.3.2)
 
 DEPENDENCIES:
   - DBFileSynchronizer (from `../`)
@@ -15,9 +15,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  DBFileSynchronizer: e05b5edaa7a4a5f9f8e1a0b9454c1d640337e2b9
-  ObjectiveDropboxOfficial: fe206ce8c0bc49976c249d472db7fdbc53ebbd53
+  DBFileSynchronizer: c3e2c04ab2ed001eb693bf91da3030eb499f4ad2
+  ObjectiveDropboxOfficial: 1b9ca679750487f770fda3f38c106d6e17fe2d73
 
-PODFILE CHECKSUM: 195ac7ddac2e974bdd7583aa64a381ac46db2a13
+PODFILE CHECKSUM: 575097484e1fb975b4d02657afbfe336d95e0ac0
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.14.3

@@ -125,7 +125,12 @@ typedef enum {
         NSLog (@"Couldn't load metadata: %@", error);
         return nil;
     } else {
-        return [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        DBLocalMetadata *metaData = [NSKeyedUnarchiver unarchivedObjectOfClass:[DBLocalMetadata class] fromData:data error: &error];
+        if (error != nil) {
+            NSLog(@"Couldn't load metadta: %@", error);
+            return nil;
+        }
+        return metaData;
     }
     
 }
@@ -135,7 +140,12 @@ typedef enum {
     DBLocalMetadata *localMetadata = [[DBLocalMetadata alloc] initWithMetadata:metadata];
     NSError *error = nil;
     NSURL *metadataURL = [self URLForMetadataFile];
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:localMetadata];
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:localMetadata requiringSecureCoding:NO error:&error];
+    if (error != nil) {
+        NSLog (@"Cannot save metadata: %@", error);
+        return error;
+    }
+    
     if (![data writeToURL:metadataURL options:0 error:&error]) {
         NSLog (@"Cannot save metadata: %@", error);
     }
@@ -171,7 +181,7 @@ typedef enum {
         
         NSString *destPath = [destFoldername stringByAppendingPathComponent:destFileName];
         
-        [[self.restClient.filesRoutes uploadUrl:destPath mode:writeMode autorename:@NO clientModified:nil mute:@NO propertyGroups:nil strictConflict:@NO inputUrl:url.path]
+        [[self.restClient.filesRoutes uploadUrl:destPath mode:writeMode autorename:@NO clientModified:nil mute:@NO propertyGroups:nil strictConflict:@NO contentHash:nil inputUrl:url.path]
             setResponseBlock:^(DBFILESFileMetadata *fileMetadata, DBFILESUploadError *routeError, DBRequestError *error) {
                 
                 if (fileMetadata) {
