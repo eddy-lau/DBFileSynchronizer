@@ -102,13 +102,13 @@ typedef enum {
     BOOL isDir = NO;
     if ([fm fileExistsAtPath:folder isDirectory:&isDir]) {
         if (!isDir) {
-            NSLog (@"Error: %@ is not a directory", folder);
+            NSLog (@"[DBFileSynchronizer] Error: %@ is not a directory", folder);
             return nil;
         }
     } else {
         NSError *error = nil;
         if (![fm createDirectoryAtPath:folder withIntermediateDirectories:YES attributes:nil error:&error]) {
-            NSLog (@"Error: %@", error);
+            NSLog (@"[DBFileSynchronizer] Error: %@", error);
             return nil;
         }
     }
@@ -122,12 +122,12 @@ typedef enum {
     NSError *error = nil;
     NSData *data = [NSData dataWithContentsOfURL:url options:0 error:&error];
     if (!data) {
-        NSLog (@"Couldn't load metadata: %@", error);
+        NSLog (@"[DBFileSynchronizer] Couldn't load metadata: %@", error);
         return nil;
     } else {
         DBLocalMetadata *metaData = [NSKeyedUnarchiver unarchivedObjectOfClass:[DBLocalMetadata class] fromData:data error: &error];
         if (error != nil) {
-            NSLog(@"Couldn't load metadta: %@", error);
+            NSLog (@"[DBFileSynchronizer] Couldn't load metadta: %@", error);
             return nil;
         }
         return metaData;
@@ -142,12 +142,12 @@ typedef enum {
     NSURL *metadataURL = [self URLForMetadataFile];
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:localMetadata requiringSecureCoding:NO error:&error];
     if (error != nil) {
-        NSLog (@"Cannot save metadata: %@", error);
+        NSLog (@"[DBFileSynchronizer] Cannot save metadata: %@", error);
         return error;
     }
     
     if (![data writeToURL:metadataURL options:0 error:&error]) {
-        NSLog (@"Cannot save metadata: %@", error);
+        NSLog (@"[DBFileSynchronizer] Cannot save metadata: %@", error);
     }
     return error;
 }
@@ -165,7 +165,7 @@ typedef enum {
     
 
     if (![[NSFileManager defaultManager] fileExistsAtPath:url.path]) {
-        NSLog(@"Local file not found, cannot upload.");
+        NSLog (@"[DBFileSynchronizer] Local file not found, cannot upload.");
         ERROR_COMPLETE([NSError fileNotFoundError:url.path], completion);
         return;
     }
@@ -382,19 +382,19 @@ typedef enum {
 
     if (self.downloadForMerge) {
         
-        NSLog (@"Merging remote file");
+        NSLog (@"[DBFileSynchronizer] Merging remote file");
         if ([self.delegate respondsToSelector:@selector(fileSynchronizer:mergeRemoteFileContentAtPath:)]) {
             [self.delegate fileSynchronizer:self mergeRemoteFileContentAtPath:destPath];
         }
 
         if ([self localMetadata].hasLocalChange) {
             
-            NSLog (@"Uploading merged file");
+            NSLog (@"[DBFileSynchronizer] Uploading merged file");
             [self uploadFileWithParentRev:metadata.rev completion:completion];
             
         } else {
             
-            NSLog (@"Remote file is same as local file");
+            NSLog (@"[DBFileSynchronizer] Remote file is same as local file");
             NSError *error = [self saveLocalMetadata:metadata];
             ERROR_COMPLETE(error, completion)
             
@@ -402,7 +402,7 @@ typedef enum {
         
     } else {
         
-        NSLog (@"Loaded remote file: %@", destPath);
+        NSLog (@"[DBFileSynchronizer] Loaded remote file: %@", destPath);
         NSError *error = [self saveLocalMetadata:metadata];
         
         if ([self.delegate respondsToSelector:@selector(fileSynchronizer:didDownloadFileAtPath:)]) {
@@ -416,7 +416,7 @@ typedef enum {
 
 - (void) restClient:(DBUserClient *)client loadFileFailedWithError:(NSError *)error completion:(DBSyncCompletionHandler)completion {
     
-    NSLog (@"Error: %@", error);
+    NSLog (@"[DBFileSynchronizer] Error: %@", error);
     if ([self.delegate respondsToSelector:@selector(fileSynchronizer:didFailWithError:)]) {
         [self.delegate fileSynchronizer:self didFailWithError:error];
     }
@@ -425,7 +425,7 @@ typedef enum {
 
 - (void) restClient:(DBUserClient *)client uploadedFile:(NSString *)destPath from:(NSString *)srcPath metadata:(DBMetadata *)metadata completion:(DBSyncCompletionHandler)completion {
     
-    NSLog (@"Uploaded: %@", destPath);
+    NSLog (@"[DBFileSynchronizer] Uploaded: %@", destPath);
     NSError *error = [self saveLocalMetadata:metadata];
     
     if ([self.delegate respondsToSelector:@selector(fileSynchronizer:didUploadFileAtPath:)]) {
@@ -436,7 +436,7 @@ typedef enum {
 
 - (void) restClient:(DBUserClient *)client uploadFileFailedWithError:(NSError *)error completion:(DBSyncCompletionHandler)completion {
     
-    NSLog (@"Sync upload failed: %@", error);
+    NSLog (@"[DBFileSynchronizer] Sync upload failed: %@", error);
     if ([self.delegate respondsToSelector:@selector(fileSynchronizer:didFailWithError:)]) {
         [self.delegate fileSynchronizer:self didFailWithError:error];
     }
@@ -455,7 +455,7 @@ typedef enum {
         
         NSError *error = nil;
         if ([self localMetadata].hasLocalChange) {
-            NSLog(@"Warning: couldn't sync local change");
+            NSLog (@"[DBFileSynchronizer] Warning: couldn't sync local change");
             error = [NSError changesNotSyncedError];
         } else {
             // Not logged in and no Local change.
@@ -506,7 +506,7 @@ typedef enum {
                                  */
                                 [self uploadFileWithParentRev:nil completion:completion];
                             } @catch( NSException *exception) {
-                                NSLog(@"We crashed: %@", exception);
+                                NSLog (@"[DBFileSynchronizer] We crashed: %@", exception);
                                 ERROR_COMPLETE([NSError errorWithException:exception], completion);
                             }
                             

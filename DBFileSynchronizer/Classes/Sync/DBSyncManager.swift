@@ -149,9 +149,9 @@ extension DBSyncManager {
             return
         }
         
-        NSLog("Found legacy keys in keychain!")
-        NSLog("This causes the problem that the new keys can't be stored.")
-        NSLog("Removing the legacy keys now...")
+        NSLog("[DBFileSynchronizer] Found legacy keys in keychain!")
+        NSLog("[DBFileSynchronizer] This causes the problem that the new keys can't be stored.")
+        NSLog("[DBFileSynchronizer] Removing the legacy keys now...")
         
         for key in allKeys {
             DBLegacyKeychain.delete(key)
@@ -215,11 +215,11 @@ extension DBSyncManager {
             /// to simulate app refresh in iOS 13.
             /// key in this commmand:
             /// (lldb) e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTaskWithIdentifier:@"DBFileSynchronizerTokenRefreshTaskId"];
-            NSLog("scheduled app refresh task")
+            NSLog("[DBFileSynchronizer] scheduled app refresh task")
             
             
         } catch {
-            NSLog("Could not schedule app refresh task \(error.localizedDescription)")
+            NSLog("[DBFileSynchronizer] Could not schedule app refresh task \(error.localizedDescription)")
         }
     }
 }

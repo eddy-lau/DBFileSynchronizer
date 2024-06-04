@@ -124,13 +124,13 @@ enum {
         
         if(authResult.isError) {
             
-            NSLog(@"Error refreshing Token: %@", authResult.nsError);
+            NSLog(@"[DBFileSynchronizer] Error refreshing Token: %@", authResult.nsError);
             
         } else if (authResult.isSuccess) {
 
             NSTimeInterval timeInterval = token.tokenExpirationTimestamp;
             NSDate *lastUpdate = [[NSDate alloc] initWithTimeIntervalSince1970:timeInterval];
-            NSLog(@"Successfully refreshed Token: %@ -> %@", token.accessToken, lastUpdate);
+            NSLog(@"[DBFileSynchronizer] Successfully refreshed Token: %@ -> %@", token.accessToken, lastUpdate);
             
         }
 
@@ -161,9 +161,9 @@ enum {
     if (client == nil) {
         NSArray<NSString *> *allKeys = [DBLegacyKeychain getAll];
         if (allKeys.count > 0) {
-            NSLog(@"Found legacy keys in keychain!");
-            NSLog(@"This causes the problem that the new keys can't be stored.");
-            NSLog(@"Removing the legacy keys now...");
+            NSLog(@"[DBFileSynchronizer] Found legacy keys in keychain!");
+            NSLog(@"[DBFileSynchronizer] This causes the problem that the new keys can't be stored.");
+            NSLog(@"[DBFileSynchronizer] Removing the legacy keys now...");
             for (NSString *key in allKeys) {
                 [DBLegacyKeychain delete:key];
             }
@@ -468,11 +468,11 @@ static NSInteger clickedCount = 0;
 
     } else if ([authResult isCancel]) {
         
-        NSLog(@"Authorization flow was manually canceled by user!");
+        NSLog(@"[DBFileSynchronizer] Authorization flow was manually canceled by user!");
         
     } else if ([authResult isError]) {
         
-        NSLog(@"Error: %@", authResult.nsError);
+        NSLog(@"[DBFileSynchronizer] Error: %@", authResult.nsError);
         [DBErrorStatusHelper setWithError:authResult.nsError isRead:NO];
         
     }

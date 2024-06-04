@@ -68,7 +68,7 @@ NSNotificationName DBSyncableDidFailNotification = @"DBSyncableDidFailNotificati
     NSError *error = nil;
     NSURL *docURL = [fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:NULL create:NO error:&error];
     if (docURL == nil) {
-        NSLog (@"Error: %@", error);
+        NSLog (@"[DBFileSynchronizer] Error: %@", error);
         return nil;
     }
     
@@ -85,16 +85,16 @@ NSNotificationName DBSyncableDidFailNotification = @"DBSyncableDidFailNotificati
         
         NSData *data = [self.syncable dataRepresentation];
         if (![data writeToURL:fileURL options:NSDataWritingAtomic error:&error]) {
-            NSLog (@"Error: %@", error);
+            NSLog (@"[DBFileSynchronizer] Error: %@", error);
         } else {
-            NSLog (@"Exported syncable to: %@", fileURL.path);
+            NSLog (@"[DBFileSynchronizer] Exported syncable to: %@", fileURL.path);
         }
         
     } else {
         
         if ([fm fileExistsAtPath:fileURL.path]) {
             if (![fm removeItemAtURL:fileURL error:&error]) {
-                NSLog (@"Error: %@", error);
+                NSLog (@"[DBFileSynchronizer] Error: %@", error);
             }
         }
         
@@ -110,7 +110,7 @@ NSNotificationName DBSyncableDidFailNotification = @"DBSyncableDidFailNotificati
     NSError *error = nil;
     NSURL *docURL = [fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:NULL create:NO error:&error];
     if (docURL == nil) {
-        NSLog (@"Error: %@", error);
+        NSLog (@"[DBFileSynchronizer] Error: %@", error);
         return nil;
     }
     
@@ -134,7 +134,7 @@ NSNotificationName DBSyncableDidFailNotification = @"DBSyncableDidFailNotificati
     NSError *error = nil;
     NSData *data = [NSData dataWithContentsOfFile:path options:0 error:&error];
     if (error || data == nil) {
-        NSLog(@"Error reading %@: %@", path, error);
+        NSLog (@"[DBFileSynchronizer] Error reading %@: %@", path, error);
         return;
     }
 
@@ -146,7 +146,7 @@ NSNotificationName DBSyncableDidFailNotification = @"DBSyncableDidFailNotificati
     NSError *error = nil;
     NSData *data = [NSData dataWithContentsOfFile:path options:0 error:&error];
     if (error || data == nil) {
-        NSLog(@"Error reading %@: %@", path, error);
+        NSLog (@"[DBFileSynchronizer] Error reading %@: %@", path, error);
         return;
     }
     

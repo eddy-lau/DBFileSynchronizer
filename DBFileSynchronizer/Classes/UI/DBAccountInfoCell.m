@@ -91,7 +91,7 @@
         
         if (error) {
             
-            NSLog(@"Error: %@", error);
+            NSLog(@"[DBFileSynchronizer] Error: %@", error);
             self.accountInfo = nil;
             self.detailTextLabel.text = @"已登出"; //ZHLocalizedString(@"Unlinked", @"");
             [DBClientsManager unlinkAndResetClients];
