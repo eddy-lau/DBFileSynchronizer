@@ -59,24 +59,27 @@ enum {
 }
 
 - (void)loadView {
-    
-    CGRect rect = [UIScreen mainScreen].bounds;
+    UIView *container = [[UIView alloc] initWithFrame:CGRectZero];
     
     UITableViewStyle style = UITableViewStyleGrouped;
     if (@available(iOS 13.0, *)) {
         style = UITableViewStyleInsetGrouped;
     }
-    UITableView *tableView = [[UITableView alloc] initWithFrame:rect style:style];
+    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectZero style:style];
+    tableView.translatesAutoresizingMaskIntoConstraints = NO;
+    [container addSubview:tableView];
+    [NSLayoutConstraint activateConstraints:@[
+        [tableView.topAnchor constraintEqualToAnchor:container.topAnchor],
+        [tableView.bottomAnchor constraintEqualToAnchor:container.bottomAnchor],
+        [tableView.leadingAnchor constraintEqualToAnchor:container.leadingAnchor],
+        [tableView.trailingAnchor constraintEqualToAnchor:container.trailingAnchor],
+    ]];
+
     self.tableView = tableView;
-    self.tableView.autoresizingMask |= UIViewAutoresizingFlexibleHeight;
-    self.tableView.autoresizingMask |= UIViewAutoresizingFlexibleWidth;
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-    
-    self.tableView.tableHeaderView = [self tableHeaderView];
-    self.tableView.tableFooterView = [self tableFooterView];
-    
-    self.view = self.tableView;
+
+    self.view = container;
 }
 
 - (void)viewDidLoad
@@ -183,6 +186,21 @@ enum {
     [DBErrorStatusHelper markAsRead];
 }
 
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    CGFloat width = self.tableView.bounds.size.width;
+    if (width == 0) return;
+
+    UIView *header = self.tableView.tableHeaderView;
+    if (!header || header.frame.size.width != width) {
+        self.tableView.tableHeaderView = [self tableHeaderView];
+    }
+    UIView *footer = self.tableView.tableFooterView;
+    if (footer && footer.frame.size.width != width) {
+        self.tableView.tableFooterView = [self tableFooterView];
+    }
+}
+
 #pragma mark localization helpers
 
 
@@ -210,11 +228,20 @@ enum {
     
     
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 130)];
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(30, 30, view.bounds.size.width-40, view.bounds.size.height - 40)];
+    
+    CGRect readableFrame = self.tableView.readableContentGuide.layoutFrame;
+    CGFloat labelX, labelW;
+    if (readableFrame.size.width > 0) {
+        labelX = readableFrame.origin.x;
+        labelW = readableFrame.size.width;
+    } else {
+        labelX = 30;
+        labelW = view.bounds.size.width - 40;
+    }
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(labelX, 30, labelW, view.bounds.size.height - 40)];
     label.numberOfLines = -1;
     label.backgroundColor = [UIColor clearColor];
-    label.autoresizingMask |= UIViewAutoresizingFlexibleHeight;
-    label.autoresizingMask |= UIViewAutoresizingFlexibleWidth;
     label.text = text;
     
     [view addSubview:label];
@@ -249,14 +276,23 @@ enum {
     if (message != nil) {
         
         UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 120)];
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, view.bounds.size.width-40, view.bounds.size.height - 40)];
+        
+        CGRect readableFrame = self.tableView.readableContentGuide.layoutFrame;
+        CGFloat labelX, labelW;
+        if (readableFrame.size.width > 0) {
+            labelX = readableFrame.origin.x;
+            labelW = readableFrame.size.width;
+        } else {
+            labelX = 20;
+            labelW = view.bounds.size.width - 40;
+        }
+        
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(labelX, 20, labelW, view.bounds.size.height - 40)];
         label.font = [UIFont systemFontOfSize:14];
         label.textAlignment = NSTextAlignmentCenter;
         label.textColor = [UIColor grayColor];
         label.numberOfLines = 1000;
         label.backgroundColor = [UIColor clearColor];
-        label.autoresizingMask |= UIViewAutoresizingFlexibleHeight;
-        label.autoresizingMask |= UIViewAutoresizingFlexibleWidth;
         label.text = message;
         [view addSubview:label];
         
